@@ -1,1 +1,2 @@
 In the scene, we want facial recognition of each person's face
+We will have a bounding box on each person's face
