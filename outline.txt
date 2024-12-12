@@ -1,3 +1,7 @@
 In the scene, we want facial recognition of each person's face
 We will have a bounding box on each person's face
 Each person's face will have a current emotion and facial expression
+Each person will also have a current transcript of what they have said
+
+Each person should have an embedding for their face, and for their voice
+We would also couple the lip syncing with their voice to double track who's speaking
