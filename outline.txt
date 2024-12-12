@@ -4,4 +4,8 @@ Each person's face will have a current emotion and facial expression
 Each person will also have a current transcript of what they have said
 
 Each person should have an embedding for their face, and for their voice
-We would also couple the lip syncing with their voice to double track who's speaking
+We would also couple the lip syncing with their voice to double track who's speakingg
+
+zoom window length max
+
+
