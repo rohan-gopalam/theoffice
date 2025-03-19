@@ -49,6 +49,7 @@ Markdown==3.7
 markdown-it-py==3.0.0
 MarkupSafe==3.0.2
 matplotlib-inline==0.1.7
+matplotlib==3.9.4
 mdurl==0.1.2
 ml-dtypes==0.4.1
 more-itertools==10.6.0
