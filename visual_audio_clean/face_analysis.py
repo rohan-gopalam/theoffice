@@ -67,7 +67,7 @@ def analyze_emotions(face_roi):
                                     silent=True) # Add silent=True to reduce console noise
         # Check if analysis was successful and has the expected structure
         if isinstance(analysis, list) and len(analysis) > 0 and isinstance(analysis[0], dict):
-            return analysis[0].get('dominant_emotion', "Unknown")
+            return analysis[0].get('emotion', "Unknown")
         else:
              print(f"Unexpected emotion analysis result format: {analysis}")
              return "Unknown"

@@ -8,10 +8,17 @@ import matplotlib.pyplot as plt
 import os
 import time
 
+import json
+import gc  # For manual garbage collection
+
 # Import configurations and functions from other modules
+from fix_cuda_issues import *
 import config
 from video_processor import split_video_into_frames
-from face_detection import load_yolo_model, detect_faces_yolo, visualize_yolo_detections
+
+# Import the new FaceTracker class instead of the individual functions
+from face_detection import FaceTracker, load_yolo_model, detect_faces_yolo, visualize_yolo_detections
+
 from face_analysis import get_face_embedding, analyze_emotions, match_known_face, load_known_faces
 from gaze import load_gaze_model, run_gaze_estimation
 from profile_manager import update_profiles, recluster_profiles
@@ -62,9 +69,9 @@ def _process_single_face(face_roi_cv, box_pixels, frame_idx, known_faces, raw_pr
     return face_data, raw_profiles
 
 
-# --- Helper Function for Processing a Single Frame ---
-def _process_single_frame(img_path, frame_idx, yolo_model, known_faces, raw_profiles, frame_dimensions):
-    """Loads image, detects faces, processes each face, returns frame data."""
+# --- Updated function that uses the Face Tracker ---
+def _process_single_frame_with_tracking(img_path, frame_idx, face_tracker, known_faces, raw_profiles, frame_dimensions):
+    """Loads image, tracks faces, processes each face, returns frame data using the FaceTracker."""
     frame_faces_details = []
     frame_norm_boxes = []
     image_tensor = None
@@ -81,81 +88,74 @@ def _process_single_frame(img_path, frame_idx, yolo_model, known_faces, raw_prof
         np_image = np.array(pil_image)
         cv_image = cv2.cvtColor(np_image, cv2.COLOR_RGB2BGR)
 
-        # 1. Raw YOLO Detection
-        # Use verbose=False to reduce console spam from YOLO
-        results = yolo_model(np_image, verbose=False)
-        detected_boxes_data = [] # Store tuples of (box, conf, class_id)
+        # Use the Face Tracker to process this frame
+        tracked_faces = face_tracker.track_faces(cv_image, frame_idx)
+        
+        print(f"  Frame {frame_idx+1}: Tracked faces = {len(tracked_faces)}")
 
-        if results and results[0].boxes is not None:
-            boxes_tensor = results[0].boxes.xyxy # xyxy format
-            confs_tensor = results[0].boxes.conf
-            classes_tensor = results[0].boxes.cls
-
-            # Filter by initial confidence threshold and class (optional, but good practice)
-            person_class_id = 0 # Assuming COCO class ID for person is 0
-            for i in range(len(boxes_tensor)):
-                conf = confs_tensor[i].item()
-                class_id = int(classes_tensor[i].item())
-                # Filter for 'person' class AND confidence threshold
-                if class_id == person_class_id and conf >= config.YOLO_CONF_THRESHOLD:
-                     box = boxes_tensor[i] # Keep as tensor for NMS
-                     detected_boxes_data.append((box, conf)) # Store box tensor and conf
-
-        print(f"  Frame {frame_idx+1}: Initial 'person' detections = {len(detected_boxes_data)}")
-
-        # 2. Apply Non-Maximum Suppression (NMS) if detections exist
-        final_boxes_pixels = [] # List to store boxes kept after NMS
-        if detected_boxes_data:
-            # Prepare data for torchvision.ops.nms
-            nms_boxes = torch.stack([data[0] for data in detected_boxes_data]) # Stack box tensors
-            nms_scores = torch.tensor([data[1] for data in detected_boxes_data]) # Create score tensor
-
-            # Apply NMS
-            keep_indices = torchvision.ops.nms(nms_boxes, nms_scores, config.NMS_IOU_THRESHOLD)
-
-            # Get the boxes that were kept
-            final_boxes_tensor = nms_boxes[keep_indices]
-            final_boxes_pixels = [[int(coord) for coord in box.tolist()] for box in final_boxes_tensor] # Convert to list of lists of ints
-
-            print(f"  Frame {frame_idx+1}: Detections after NMS = {len(final_boxes_pixels)}")
-
-
-        # Optional: Visualize raw YOLO detections (can be slow)
-        if config.SHOW_YOLO_DETECTIONS and detected_boxes_data:
-             annotated_img = results[0].plot() # Plot original unfiltered results for comparison
-             plt.figure(figsize=(8, 6))
-             plt.imshow(cv2.cvtColor(annotated_img, cv2.COLOR_BGR2RGB))
-             plt.title(f"Raw YOLO Detections (Before NMS): Frame {frame_idx+1}")
-             plt.axis("off")
-             plt.show(block=False)
-             plt.pause(0.1)
-             plt.close('all')
-
-        # 3. Process Each *Final* Detected Face
-        if final_boxes_pixels:
-            # Prepare image tensor for gaze *once* per frame if faces survived NMS
+        # Process each tracked face
+        if tracked_faces:
+            # Prepare image tensor for gaze once per frame
             image_tensor = config.gaze_transform(pil_image).unsqueeze(0)
 
-            for box_pixels in final_boxes_pixels: # Iterate over boxes kept by NMS
-                x1, y1, x2, y2 = box_pixels # Already integers
-                # Clip coordinates (should be redundant if YOLO output is valid, but safe)
-                x1, y1 = max(0, x1), max(0, y1)
-                x2, y2 = min(width, x2), min(height, y2)
-                if x1 >= x2 or y1 >= y2: continue # Skip invalid box dimensions
-
+            for face_data in tracked_faces:
+                x1, y1, x2, y2 = face_data['bbox']
+                # Get the face region
                 face_roi_cv = cv_image[y1:y2, x1:x2]
-                if face_roi_cv.size == 0: continue
+                if face_roi_cv.size == 0: 
+                    continue
 
-                # Process this single face using the helper
-                face_data, raw_profiles = _process_single_face(
-                    face_roi_cv, (x1, y1, x2, y2), frame_idx, known_faces, raw_profiles
-                )
+                # Get face embedding (only if not already done by tracker)
+                # Note: The tracker has profile management built in, but here we use the existing system
+                embedding = get_face_embedding(face_roi_cv)
+                if embedding is None:
+                    continue
 
-                if face_data: # If processing was successful
-                    frame_faces_details.append(face_data)
-                    # Store normalized bbox for gaze model input
-                    norm_box = [x1/width, y1/height, x2/width, y2/height]
-                    frame_norm_boxes.append(norm_box)
+                # Analyze emotion
+                emotion = analyze_emotions(face_roi_cv)
+
+                # Match to known faces if provided
+                known_identity, similarity_score = None, float('inf')
+                if known_faces:
+                    known_identity, similarity_score = match_known_face(embedding, known_faces)
+
+                # Use the face tracker's profile_id as the temp_profile_id
+                # This leverages YOLO's tracking for more consistent IDs
+                profile_id = face_data['profile_id']
+                
+                # We also update our raw_profiles using the existing system
+                # This allows us to continue using the recluster_profiles function
+                if profile_id not in raw_profiles:
+                    raw_profiles[profile_id] = {
+                        "embedding": embedding,
+                        "frames_seen": [frame_idx],
+                        "name": f"Person {profile_id}"
+                    }
+                else:
+                    raw_profiles[profile_id]["frames_seen"].append(frame_idx)
+
+                # If a known identity was found, update the profile's name
+                if known_identity and raw_profiles[profile_id]["name"].startswith("Person "):
+                    raw_profiles[profile_id]["name"] = known_identity
+
+                # Create face data for this detection
+                processed_face_data = {
+                    "frame_idx": frame_idx,
+                    "bbox_pixels": (x1, y1, x2, y2),
+                    "emotion": emotion,
+                    "temp_profile_id": profile_id,
+                    "profile_name": raw_profiles[profile_id]["name"],
+                    "known_identity_match": known_identity,
+                    "known_identity_score": similarity_score if known_identity else None,
+                    "gaze": {},  # Placeholder for gaze data
+                    "yolo_track_id": face_data['yolo_track_id']  # Store the YOLO track ID for reference
+                }
+
+                frame_faces_details.append(processed_face_data)
+                
+                # Store normalized bbox for gaze model input
+                norm_box = [x1/width, y1/height, x2/width, y2/height]
+                frame_norm_boxes.append(norm_box)
 
         return frame_faces_details, frame_norm_boxes, image_tensor, raw_profiles, True
 
@@ -178,6 +178,20 @@ def _integrate_gaze_and_finalize(image_paths, frame_face_details, gaze_results, 
     gaze_frame_counter = 0 # Index into gaze_results
 
     print("\n--- Aggregating Final Results and Visualizations ---")
+    # Filter out profiles that appear in too few frames (likely false detections)
+    total_frames = len(image_paths)
+    min_frame_threshold = max(2, int(total_frames * 0.1))  # At least 10% of frames or 2 frames
+    
+    stable_profiles = {}
+    for profile_id, profile_data in final_profiles.items():
+        frames_seen = profile_data.get("frames_seen", [])
+        if len(frames_seen) >= min_frame_threshold:
+            stable_profiles[profile_id] = profile_data
+    
+    # Use the filtered profiles
+    final_profiles = stable_profiles
+
+    
 
     for frame_idx, img_path in enumerate(image_paths):
         faces_in_this_frame = frame_face_details[frame_idx]
@@ -210,7 +224,7 @@ def _integrate_gaze_and_finalize(image_paths, frame_face_details, gaze_results, 
 
             # --- Assign Final Profile ID and Name ---
             temp_id = face_data["temp_profile_id"]
-            final_id = profile_assignment_map.get(temp_id)
+            final_id = profile_assignment_map.get(temp_id, temp_id)  # Use temp_id as fallback
             final_name = final_profiles.get(final_id, {}).get("name", f"Person {final_id}" if final_id else "Unknown")
 
             face_data["profile_id"] = final_id
@@ -272,9 +286,150 @@ def _integrate_gaze_and_finalize(image_paths, frame_face_details, gaze_results, 
     return final_frame_results, visualizations
 
 
-# --- Main Analysis Function (Orchestrator) ---
-def analyze_video_frames(image_paths, gaze_model, yolo_face_model, known_faces=None):
-    """Orchestrates the frame-by-frame analysis, gaze, clustering, and finalization."""
+# --- Updated process_video_in_chunks function ---
+def process_video_in_chunks(video_path, chunk_duration=10):
+    """
+    Process a video in fixed-duration chunks, saving results for each chunk separately.
+    Uses the FaceTracker for more consistent tracking across frames.
+    
+    Args:
+        video_path: Path to the video file
+        chunk_duration: Duration of each chunk in seconds
+    """
+    print(f"--- Starting Chunked Video Analysis Pipeline with Face Tracking ---")
+    print(f"Processing video: {video_path} in {chunk_duration}-second chunks")
+    
+    # Get video metadata (total duration)
+    import cv2
+    video = cv2.VideoCapture(video_path)
+    if not video.isOpened():
+        print(f"FATAL ERROR: Could not open video file at '{video_path}'")
+        return
+    
+    fps = video.get(cv2.CAP_PROP_FPS)
+    frame_count = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
+    total_duration = frame_count / fps
+    total_chunks = int(total_duration / chunk_duration) + 1
+    video.release()
+    
+    print(f"Video stats: {frame_count} frames, {fps:.2f} FPS, {total_duration:.2f} seconds")
+    print(f"Will process in {total_chunks} chunks of {chunk_duration} seconds each")
+    
+    # Load models once (outside the chunk loop)
+    try:
+        print("\nLoading models...")
+        # Initialize the Face Tracker instead of just the YOLO model
+        face_tracker = FaceTracker(model_path=config.YOLO_MODEL_PATH, 
+                                 device=config.device,
+                                 conf_threshold=config.YOLO_CONF_THRESHOLD)
+        
+        gaze_model = load_gaze_model()
+        
+        # Optional: Load known faces
+        known_face_images = None  # Set this if you have known faces
+        known_faces_embeddings = None
+        if known_face_images and face_tracker.model:
+            print("Loading known face embeddings...")
+            known_faces_embeddings = load_known_faces(known_face_images, face_tracker.model)
+    except Exception as e:
+        print(f"\nFATAL ERROR: Failed to load models. Exiting. Error: {e}")
+        return
+    
+    # Process each chunk
+    for chunk_idx in range(total_chunks):
+        chunk_start_time = chunk_idx * chunk_duration
+        chunk_end_time = min((chunk_idx + 1) * chunk_duration, total_duration)
+        
+        print(f"\n\n=== Processing Chunk {chunk_idx+1}/{total_chunks} ===")
+        print(f"Time range: {chunk_start_time:.2f}s - {chunk_end_time:.2f}s")
+        
+        # Create a temporary output directory for this chunk
+        chunk_output_dir = f"{config.OUTPUT_DIR}/chunk_{chunk_idx+1}"
+        chunk_frame_dir = f"{chunk_output_dir}/frames"
+        chunk_viz_dir = f"{chunk_output_dir}/visualizations"
+        chunk_json_path = f"{chunk_output_dir}/analysis_chunk_{chunk_idx+1}.json"
+        
+        os.makedirs(chunk_frame_dir, exist_ok=True)
+        os.makedirs(chunk_viz_dir, exist_ok=True)
+        
+        # 1. Extract frames only for this time range
+        start_time = time.time()
+        print(f"Extracting frames for chunk {chunk_idx+1}...")
+        
+        # Modify the frame extraction function to accept time range parameters
+        chunk_image_paths = split_video_into_frames(
+            video_path,
+            chunk_frame_dir,
+            frames_per_second=config.FRAMES_PER_SECOND_TO_EXTRACT,
+            start_time=chunk_start_time,
+            end_time=chunk_end_time
+        )
+        
+        if not chunk_image_paths:
+            print(f"No frames extracted for chunk {chunk_idx+1}. Skipping.")
+            continue
+        
+        print(f"Extracted {len(chunk_image_paths)} frames for chunk {chunk_idx+1}")
+        
+        # 2. Temporarily override config for this chunk
+        original_viz_dir = config.VISUALIZATION_OUTPUT_DIR
+        original_llm_path = config.LLM_OUTPUT_PATH
+        
+        config.VISUALIZATION_OUTPUT_DIR = chunk_viz_dir
+        config.LLM_OUTPUT_PATH = chunk_json_path
+        
+        # 3. Run full analysis on this chunk
+        try:
+            print(f"Running analysis on chunk {chunk_idx+1}...")
+            analysis_results, llm_json_data = analyze_video_frames_with_tracking(
+                chunk_image_paths,
+                face_tracker,
+                gaze_model,
+                known_faces=known_faces_embeddings
+            )
+            
+            # 4. Display/save results for this chunk
+            display_analysis_results(analysis_results)
+            
+            # 5. Add chunk metadata to the JSON
+            llm_json_data["chunk_metadata"] = {
+                "chunk_index": chunk_idx + 1,
+                "total_chunks": total_chunks,
+                "start_time": chunk_start_time,
+                "end_time": chunk_end_time,
+                "frame_count": len(chunk_image_paths)
+            }
+            
+            # 6. Save the JSON explicitly (should already be done by create_llm_input, but just to be sure)
+            with open(chunk_json_path, 'w') as f:
+                json.dump(llm_json_data, f, indent=2)
+                
+            print(f"Analysis for chunk {chunk_idx+1} completed and saved to {chunk_json_path}")
+            
+        except Exception as e:
+            print(f"Error processing chunk {chunk_idx+1}: {e}")
+            import traceback
+            traceback.print_exc()
+        
+        # 7. Restore original config
+        config.VISUALIZATION_OUTPUT_DIR = original_viz_dir
+        config.LLM_OUTPUT_PATH = original_llm_path
+        
+        # 8. Clean up memory
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
+        gc.collect()  # Force garbage collection
+        
+        chunk_end_time = time.time()
+        print(f"Chunk {chunk_idx+1} processing time: {chunk_end_time - start_time:.2f} seconds")
+    
+    print("\n--- Chunked Video Analysis Pipeline Complete ---")
+    print(f"Results saved to {config.OUTPUT_DIR}/chunk_* directories")
+
+
+# --- Updated Main Analysis Function (using Face Tracker) ---
+def analyze_video_frames_with_tracking(image_paths, face_tracker, gaze_model, known_faces=None):
+    """Orchestrates the frame-by-frame analysis using face tracking for better consistency."""
     start_time = time.time()
     overall_results = {}
     raw_profiles = {} # Tracks faces across frames before reclustering
@@ -283,15 +438,15 @@ def analyze_video_frames(image_paths, gaze_model, yolo_face_model, known_faces=N
     all_image_tensors = [] # List of tensors or None
     frame_dimensions = {} # Cache frame dimensions
 
-    print(f"\nStarting analysis of {len(image_paths)} frames...")
+    print(f"\nStarting analysis of {len(image_paths)} frames with face tracking...")
     if not image_paths: return {}, {} # Handle empty input
 
-    # --- Stage 1: Process Each Frame Individually ---
+    # --- Stage 1: Process Each Frame with Face Tracking ---
     for frame_idx, img_path in enumerate(image_paths):
         print(f"\rProcessing Frame {frame_idx+1}/{len(image_paths)}...", end="")
-        # Call helper to process this frame
-        frame_details, norm_boxes, img_tensor, raw_profiles, success = _process_single_frame(
-            img_path, frame_idx, yolo_model, known_faces, raw_profiles, frame_dimensions
+        # Call updated helper to process this frame with tracking
+        frame_details, norm_boxes, img_tensor, raw_profiles, success = _process_single_frame_with_tracking(
+            img_path, frame_idx, face_tracker, known_faces, raw_profiles, frame_dimensions
         )
         # Store results from this frame
         all_frame_face_details.append(frame_details)
@@ -316,7 +471,6 @@ def analyze_video_frames(image_paths, gaze_model, yolo_face_model, known_faces=N
     profile_assignment_map, final_profiles = recluster_profiles(valid_raw_profiles)
 
     # --- Stage 4: Integrate Gaze, Finalize Results, and Visualize ---
-    # Call the final helper function
     final_frame_results, visualizations = _integrate_gaze_and_finalize(
         image_paths, all_frame_face_details, gaze_results, all_image_tensors,
         profile_assignment_map, final_profiles, frame_dimensions
@@ -337,106 +491,51 @@ def analyze_video_frames(image_paths, gaze_model, yolo_face_model, known_faces=N
     return overall_results, llm_data
 
 
-# (Keep display_analysis_results function as it was)
+# Keep display_analysis_results function unchanged
 def display_analysis_results(results):
-    """Displays the generated visualizations using Matplotlib."""
+    """Saves the generated visualizations to files without displaying them."""
     visual_out = results.get("visualizations", {})
     if not visual_out:
         print("\nNo visualizations were generated or found in results.")
-        # return # Keep going to print profile summary
-
-    print("\nDisplaying Visualizations (Close each window to proceed)...")
+    
+    print("\nSaving Visualizations to files...")
     for path, vis_img in visual_out.items():
         try:
-            plt.figure(figsize=(14, 10)) # Larger figure size
-            plt.imshow(vis_img)
-            plt.title(f"Analysis: {os.path.basename(path)}")
-            plt.axis("off")
-            plt.tight_layout()
-            plt.show() # Will block until window is closed
+            # The image should already be saved by _integrate_gaze_and_finalize,
+            # but we can add a redundant save here to be sure
+            if config.VISUALIZATION_OUTPUT_DIR:
+                os.makedirs(config.VISUALIZATION_OUTPUT_DIR, exist_ok=True)
+                base_name = os.path.splitext(os.path.basename(path))[0]
+                out_path = os.path.join(config.VISUALIZATION_OUTPUT_DIR, f"display_{base_name}.png")
+                vis_img.save(out_path)
+                print(f"Saved visualization to {out_path}")
         except Exception as e:
-            print(f"Error displaying visualization for {os.path.basename(path)}: {e}")
+            print(f"Error saving visualization for {os.path.basename(path)}: {e}")
 
+    # Print profile summary
     profs = results.get("profiles", {})
     if profs:
         print("\n--- Final Profile Summary ---")
-        # Sort profiles by their final ID (key) before printing
         for pid, prof in sorted(profs.items()):
             frame_indices = prof.get('frames_seen', [])
             appearance_count = len(frame_indices)
             print(f"  Profile ID {pid} ({prof.get('name', 'Unknown')}): Appeared in {appearance_count} frame(s)")
-            # Optional: Print frame indices if list is not too long
-            # if appearance_count > 0 and appearance_count < 20:
-            #    print(f"    Frame Indices: {frame_indices}")
     else:
         print("\nNo distinct profiles were finalized.")
-
 
 # -----------------------------
 # Main Execution Block
 # -----------------------------
 if __name__ == "__main__":
-
-    print("--- Starting Video Analysis Pipeline ---")
-
-    # --- 1. Extract Frames from Video ---
-    print(f"\nStep 1: Extracting frames from video: {config.VIDEO_INPUT_PATH}")
-    print(f"        Outputting to: {config.FRAME_OUTPUT_FOLDER}")
+    print("--- Starting Chunked Video Analysis Pipeline with Face Tracking ---")
+    
     if not os.path.exists(config.VIDEO_INPUT_PATH):
-         print(f"FATAL ERROR: Input video file not found at '{config.VIDEO_INPUT_PATH}'")
-         print("Please check the VIDEO_INPUT_PATH in config.py")
-         exit(1)
-
-    image_paths = split_video_into_frames(
+        print(f"FATAL ERROR: Input video file not found at '{config.VIDEO_INPUT_PATH}'")
+        print("Please check the VIDEO_INPUT_PATH in config.py")
+        exit(1)
+    
+    # Process the video in chunks using face tracking
+    process_video_in_chunks(
         config.VIDEO_INPUT_PATH,
-        config.FRAME_OUTPUT_FOLDER,
-        frames_per_second=config.FRAMES_PER_SECOND_TO_EXTRACT
+        chunk_duration=10  # 10-second chunks
     )
-
-    if not image_paths:
-        print("\nError: Frame extraction failed or produced no frames.")
-        exit(1)
-    print(f"Step 1 Complete: Successfully extracted {len(image_paths)} frames.")
-
-    # --- 2. (Optional) Load Known Faces ---
-    print("\nStep 2: Loading models and optional known faces...")
-    known_face_images = None # Set to None or a dict like {"Name": "path/to/img.jpg"}
-    known_faces_embeddings = None
-
-    # --- 3. Load Analysis Models ---
-    yolo_model = None
-    gaze_model = None
-    try:
-        yolo_model = load_yolo_model()
-        gaze_model = load_gaze_model()
-    except Exception as e:
-        print(f"\nFATAL ERROR: Failed to load models. Exiting. Error: {e}")
-        exit(1)
-
-    if known_face_images and yolo_model:
-        print("   Loading known face embeddings...")
-        known_faces_embeddings = load_known_faces(known_face_images, yolo_model)
-        if not known_faces_embeddings: print("   Warning: Known faces specified, but no embeddings loaded.")
-    elif known_face_images: print("   Warning: Cannot load known faces - YOLO model failed.")
-
-    print("Step 2 & 3 Complete: Models loaded.")
-
-    # --- 4. Run Core Analysis (using the orchestrator function) ---
-    print(f"\nStep 4: Analyzing {len(image_paths)} extracted frames...")
-    analysis_results, llm_json_data = analyze_video_frames(
-        image_paths,
-        gaze_model,
-        yolo_model,
-        known_faces=known_faces_embeddings
-    )
-    print("Step 4 Complete: Frame analysis finished.")
-
-    # --- 5. Display Results ---
-    print("\nStep 5: Displaying analysis results...")
-    display_analysis_results(analysis_results)
-    print("Step 5 Complete: Results displayed.")
-
-    print(f"\n--- Pipeline Finished ---")
-    print(f"Visualizations saved to: {config.VISUALIZATION_OUTPUT_DIR}")
-    print(f"LLM data saved to: {config.LLM_OUTPUT_PATH}")
-    print("-----------------------------")

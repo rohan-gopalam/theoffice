@@ -1,0 +1,63 @@
+{
+  "session_summary": {
+    "total_frames_processed": 1,
+    "distinct_people_identified": {
+      "1": {
+        "assigned_name": "Person 1",
+        "appeared_in_frame_indices": [
+          0
+        ]
+      },
+      "2": {
+        "assigned_name": "Person 2",
+        "appeared_in_frame_indices": [
+          0
+        ]
+      }
+    }
+  },
+  "frame_by_frame_analysis": [
+    {
+      "frame_identifier": "frame_022500.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 98.47307792145479,
+            "disgust": 2.2106612564093102e-11,
+            "fear": 0.00859943953725894,
+            "happy": 0.0899664878452711,
+            "sad": 1.427317495782226,
+            "surprise": 1.6667662688750004e-08,
+            "neutral": 0.0010384707530258486
+          },
+          "gaze_info": {
+            "gaze_target": "camera"
+          }
+        },
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 7.665041379389947e-08,
+            "disgust": 6.438211405296231e-15,
+            "fear": 1.6065197783188268e-09,
+            "happy": 50.23448467254639,
+            "sad": 49.750569462776184,
+            "surprise": 9.22358740220678e-13,
+            "neutral": 0.014946813462302089
+          },
+          "gaze_info": {
+            "gaze_target": "camera"
+          }
+        }
+      ]
+    }
+  ],
+  "chunk_metadata": {
+    "chunk_index": 76,
+    "total_chunks": 76,
+    "start_time": 750,
+    "end_time": 750.4666666666667,
+    "frame_count": 1
+  }
+}

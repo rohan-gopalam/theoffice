@@ -1,0 +1,604 @@
+{
+  "session_summary": {
+    "total_frames_processed": 10,
+    "distinct_people_identified": {
+      "1": {
+        "assigned_name": "Person 1",
+        "appeared_in_frame_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "2": {
+        "assigned_name": "Person 2",
+        "appeared_in_frame_indices": [
+          1,
+          5,
+          8,
+          9
+        ]
+      },
+      "3": {
+        "assigned_name": "Person 3",
+        "appeared_in_frame_indices": [
+          2
+        ]
+      },
+      "4": {
+        "assigned_name": "Person 4",
+        "appeared_in_frame_indices": [
+          8,
+          9
+        ]
+      }
+    }
+  },
+  "frame_by_frame_analysis": [
+    {
+      "frame_identifier": "frame_009300.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 2.527469270061059e-10,
+            "disgust": 8.852183454046204e-23,
+            "fear": 95.44700953048525,
+            "happy": 4.900544780530863e-11,
+            "sad": 4.552848908474976,
+            "surprise": 1.332591487322918e-14,
+            "neutral": 0.00014398725346504638
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 106,
+              "y": 120
+            },
+            "gaze_target": "other"
+          }
+        },
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.7002419792115688,
+            "disgust": 9.857500015905685e-11,
+            "fear": 95.04292011260986,
+            "happy": 9.945980671000054e-11,
+            "sad": 3.8469024002552032,
+            "surprise": 2.3816749461502695e-06,
+            "neutral": 0.4099388141185045
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 234,
+              "y": 124
+            },
+            "gaze_target": "other"
+          }
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_009330.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.0037322446587495506,
+            "disgust": 1.3586226361875318e-13,
+            "fear": 0.02974162343889475,
+            "happy": 9.140887158309852e-06,
+            "sad": 2.931896038353443,
+            "surprise": 0.030055295792408288,
+            "neutral": 97.00456857681274
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 139,
+              "y": 141
+            },
+            "gaze_target": "other"
+          }
+        },
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 6.053006945498651e-11,
+            "disgust": 1.5497218705385442e-25,
+            "fear": 10.793614387512207,
+            "happy": 5.576434631985108e-13,
+            "sad": 89.2063558101654,
+            "surprise": 1.5247512521604983e-20,
+            "neutral": 3.5653911822919326e-05
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 139,
+              "y": 141
+            },
+            "gaze_target": "other"
+          }
+        },
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 0.022895530855748802,
+            "disgust": 4.282844301428668e-06,
+            "fear": 15.957275032997131,
+            "happy": 83.80219340324402,
+            "sad": 0.2175783971324563,
+            "surprise": 3.5702811818083546e-07,
+            "neutral": 4.681222947056085e-05
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 129,
+              "y": 124
+            },
+            "gaze_target": "Person 1",
+            "target_profile_id": 1
+          }
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_009360.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.0028539796285607815,
+            "disgust": 0.0004808894405101186,
+            "fear": 1.447806686777275,
+            "happy": 0.0014558488104835375,
+            "sad": 98.54718438072112,
+            "surprise": 1.661259336830569e-10,
+            "neutral": 0.00022245316320430948
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 324,
+              "y": 124
+            },
+            "gaze_target": "other"
+          }
+        },
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.0009050389962794725,
+            "disgust": 2.0962318025499915e-17,
+            "fear": 0.09564028005115688,
+            "happy": 2.6125812756706715e-14,
+            "sad": 88.90119194984436,
+            "surprise": 6.947264622305174e-12,
+            "neutral": 11.002257466316223
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 229,
+              "y": 249
+            },
+            "gaze_target": "other"
+          }
+        },
+        {
+          "name": "Person 3",
+          "emotion_detected": {
+            "angry": 0.002012569166254252,
+            "disgust": 8.194191158938935e-09,
+            "fear": 0.06965289358049631,
+            "happy": 1.8815544677863727e-06,
+            "sad": 99.83356595039368,
+            "surprise": 8.450493776956947e-10,
+            "neutral": 0.09476321283727884
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 145,
+              "y": 173
+            },
+            "gaze_target": "Person 1",
+            "target_profile_id": 1
+          }
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_009390.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.4450674699327314,
+            "disgust": 0.0012970397347140462,
+            "fear": 16.094614993883965,
+            "happy": 0.12066243490650475,
+            "sad": 82.83092174898646,
+            "surprise": 0.022363749786801612,
+            "neutral": 0.48507644058185106
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 170,
+              "y": 173
+            },
+            "gaze_target": "other"
+          }
+        },
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 1.774611696600914,
+            "disgust": 9.305540279308522e-11,
+            "fear": 1.9773287363022973e-05,
+            "happy": 2.665173681748456e-06,
+            "sad": 2.0468581467866898,
+            "surprise": 1.8304642523947479e-09,
+            "neutral": 96.17851376533508
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 187,
+              "y": 245
+            },
+            "gaze_target": "other"
+          }
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_009420.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.05368614802137017,
+            "disgust": 1.2197610033126693e-05,
+            "fear": 0.37596772890537977,
+            "happy": 0.014034846390131861,
+            "sad": 99.21076893806458,
+            "surprise": 0.0022785050532547757,
+            "neutral": 0.3432519035413861
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 287,
+              "y": 249
+            },
+            "gaze_target": "other"
+          }
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_009450.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.0006391723144486576,
+            "disgust": 3.241038186720849e-09,
+            "fear": 7.632178523074301,
+            "happy": 0.0004574794092890175,
+            "sad": 92.0087451940027,
+            "surprise": 6.675430029173168e-05,
+            "neutral": 0.3579128979765116
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 169,
+              "y": 153
+            },
+            "gaze_target": "other"
+          }
+        },
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.005052803982053376,
+            "disgust": 3.141599496466567e-22,
+            "fear": 1.5639270367214724e-06,
+            "happy": 4.6901867310361793e-17,
+            "sad": 6.767686114769346,
+            "surprise": 6.212956778484357e-20,
+            "neutral": 93.22726090116863
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 293,
+              "y": 133
+            },
+            "gaze_target": "other"
+          }
+        },
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 0.10466694990050494,
+            "disgust": 5.732144700834247e-06,
+            "fear": 0.023149889527440938,
+            "happy": 96.88155632505156,
+            "sad": 2.9872676275532024,
+            "surprise": 7.34760918160911e-06,
+            "neutral": 0.0033490179880402526
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 45,
+              "y": 52
+            },
+            "gaze_target": "Person 1",
+            "target_profile_id": 1
+          }
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_009480.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.19182665273547173,
+            "disgust": 4.395310521776948e-17,
+            "fear": 4.469520586969367e-09,
+            "happy": 2.2243225056978178e-10,
+            "sad": 0.5092291161417961,
+            "surprise": 4.78206409475386e-12,
+            "neutral": 99.29894208908081
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 305,
+              "y": 137
+            },
+            "gaze_target": "other"
+          }
+        },
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.0027398922611610033,
+            "disgust": 5.682119774697014e-08,
+            "fear": 13.51243257522583,
+            "happy": 0.001109598724724492,
+            "sad": 86.02454662322998,
+            "surprise": 0.0025074517907341942,
+            "neutral": 0.4566616378724575
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 169,
+              "y": 161
+            },
+            "gaze_target": "other"
+          }
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_009510.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 1.1181300241130605,
+            "disgust": 3.7954291314186167e-16,
+            "fear": 1.5660786934803657e-07,
+            "happy": 8.466426171734023e-12,
+            "sad": 5.00884160452137,
+            "surprise": 7.69640545649892e-14,
+            "neutral": 93.87302958208498
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 306,
+              "y": 137
+            },
+            "gaze_target": "other"
+          }
+        },
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.007704084418946877,
+            "disgust": 6.195306934131395e-07,
+            "fear": 19.71687227487564,
+            "happy": 0.007037242176011205,
+            "sad": 77.40097045898438,
+            "surprise": 0.0018839633412426338,
+            "neutral": 2.8655339032411575
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 170,
+              "y": 169
+            },
+            "gaze_target": "other"
+          }
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_009540.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 1.9866205751895905,
+            "disgust": 3.620412310653768e-14,
+            "fear": 6.194331803044406e-06,
+            "happy": 4.648099179854759e-10,
+            "sad": 1.23730031773448,
+            "surprise": 2.757599954861332e-12,
+            "neutral": 96.77607417106628
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 284,
+              "y": 253
+            },
+            "gaze_target": "other"
+          }
+        },
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.01725850555072013,
+            "disgust": 2.825477576009119e-07,
+            "fear": 45.369636736490534,
+            "happy": 0.0007002364290116881,
+            "sad": 54.18173397670591,
+            "surprise": 0.04291031474364935,
+            "neutral": 0.38776241691484553
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 164,
+              "y": 165
+            },
+            "gaze_target": "other"
+          }
+        },
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 0.20381053808354876,
+            "disgust": 0.018870678401601653,
+            "fear": 25.035873051181667,
+            "happy": 0.10035613053889507,
+            "sad": 74.63808362029987,
+            "surprise": 4.937598185682992e-06,
+            "neutral": 0.0029928363871685624
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 56,
+              "y": 84
+            },
+            "gaze_target": "Person 1",
+            "target_profile_id": 1
+          }
+        },
+        {
+          "name": "Person 4",
+          "emotion_detected": {
+            "angry": 0.5334217271562489,
+            "disgust": 3.1704437302424486e-08,
+            "fear": 0.4269438839040856,
+            "happy": 0.08267893393794405,
+            "sad": 98.8680838189225,
+            "surprise": 7.583161620099315e-12,
+            "neutral": 0.08887237531660501
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 159,
+              "y": 157
+            },
+            "gaze_target": "Person 1",
+            "target_profile_id": 1
+          }
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_009570.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.645465233717533,
+            "disgust": 6.837972918122803e-16,
+            "fear": 4.622558140328747e-06,
+            "happy": 1.8978946358551187e-09,
+            "sad": 0.3671358134659155,
+            "surprise": 2.6962112051987244e-10,
+            "neutral": 98.98738873155251
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 273,
+              "y": 133
+            },
+            "gaze_target": "other"
+          }
+        },
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.019718530249768808,
+            "disgust": 1.9744749235648567e-07,
+            "fear": 6.064684305470246,
+            "happy": 0.0025775645271308065,
+            "sad": 93.89362298808234,
+            "surprise": 0.0005984401370545792,
+            "neutral": 0.018801040671082774
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 170,
+              "y": 153
+            },
+            "gaze_target": "other"
+          }
+        },
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 0.6536934059113264,
+            "disgust": 7.102019026206108e-05,
+            "fear": 81.01106882095337,
+            "happy": 11.618617922067642,
+            "sad": 6.677617132663727,
+            "surprise": 3.3051844638976036e-05,
+            "neutral": 0.03889561630785465
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 170,
+              "y": 157
+            },
+            "gaze_target": "Person 1",
+            "target_profile_id": 1
+          }
+        },
+        {
+          "name": "Person 4",
+          "emotion_detected": {
+            "angry": 0.47297309102438795,
+            "disgust": 3.0344001469104376e-08,
+            "fear": 0.3543744605407762,
+            "happy": 0.0927500025164333,
+            "sad": 98.95749700576103,
+            "surprise": 1.495496798846201e-11,
+            "neutral": 0.12240005594938326
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 170,
+              "y": 157
+            },
+            "gaze_target": "Person 1",
+            "target_profile_id": 1
+          }
+        }
+      ]
+    }
+  ],
+  "chunk_metadata": {
+    "chunk_index": 32,
+    "total_chunks": 76,
+    "start_time": 310,
+    "end_time": 320,
+    "frame_count": 10
+  }
+}
