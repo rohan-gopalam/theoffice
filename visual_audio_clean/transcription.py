@@ -6,11 +6,11 @@ from google.cloud import speech
 import threading
 
 # Set Google Cloud credentials
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/aditya/Downloads/seismic-rarity-427422-p7-ab3b4a8726ef.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/preenamaru/desktop/launchpad/seismic-rarity-427422-p7-ab3b4a8726ef.json"
 
 # Configuration
 USE_LOCAL_FILE = True
-LOCAL_VIDEO_PATH = "/path/to/local/video.mp4"
+LOCAL_VIDEO_PATH = "/Users/preenamaru/launchpad/theoffice-1/videos/ween.mp4"
 YOUTUBE_URL = "https://www.youtube.com/watch?v=96Y6mc3C1Bg"
 
 def format_time(time_sec):
@@ -78,21 +78,40 @@ def transcribe_audio_stream(source) -> list[str]:
 
                 if tag != current_speaker:
                     sent = " ".join(current_sentence)
-                    lines.append(f"speaker {current_speaker} @ {format_time(current_start)} {sent}")
+                    full = f"speaker {current_speaker} @ {format_time(current_start)} {sent}"
+                    if (full not in lines):
+                        lines.append(f"speaker {current_speaker} @ {format_time(current_start)} {sent}")
                     current_speaker = tag
                     current_sentence = [word]
                     current_start = start
                 else:
                     current_sentence.append(word)
 
-        if current_sentence:
-            sent = " ".join(current_sentence)
-            lines.append(f"speaker {current_speaker} @ {format_time(current_start)} {sent}")
+            if current_sentence:
+                sent = " ".join(current_sentence)
+                full = f"speaker {current_speaker} @ {format_time(current_start)} {sent}"
+                if (full not in lines):
+                    lines.append(f"speaker {current_speaker} @ {format_time(current_start)} {sent}")
 
+
+            
     finally:
         proc.terminate()
 
     return lines
+
+def group_transcriptions_by_time(lines, chunk_duration=10):
+    time_buckets = {}
+    for line in lines:
+        try:
+            time_part = line.split("@")[1].split()[0].strip()
+            seconds, ms = map(int, time_part.split(":"))
+            total_seconds = seconds + ms / 1000.0
+            bucket_index = int(total_seconds // chunk_duration)
+            time_buckets.setdefault(bucket_index, []).append(line)
+        except Exception as e:
+            print(f"Error parsing line '{line}': {e}")
+    return time_buckets
 
 def play_video_with_transcription(video_src, audio_src):
     cap = cv2.VideoCapture(video_src)

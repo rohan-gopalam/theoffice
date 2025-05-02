@@ -1,0 +1,1290 @@
+[
+  {
+    "chunk_index": 1,
+    "start_time": 0.0,
+    "end_time": 2.0,
+    "last_frame_index": 119,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          250.0,
+          121.0,
+          968.0,
+          1064.0
+        ],
+        "face_bbox": [
+          250.0,
+          121.0,
+          968.0,
+          451.0
+        ],
+        "conf": 0.8948283791542053,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          1134.0,
+          39.0,
+          1788.0,
+          1066.0
+        ],
+        "face_bbox": [
+          1134.0,
+          39.0,
+          1788.0,
+          398.0
+        ],
+        "conf": 0.8471208810806274,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 2,
+    "start_time": 2.0,
+    "end_time": 4.0,
+    "last_frame_index": 239,
+    "target_face_id": -1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1133.0,
+          32.0,
+          1777.0,
+          1066.0
+        ],
+        "face_bbox": [
+          1133.0,
+          32.0,
+          1777.0,
+          393.0
+        ],
+        "conf": 0.8817840218544006,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          191.0,
+          89.0,
+          966.0,
+          1067.0
+        ],
+        "face_bbox": [
+          191.0,
+          89.0,
+          966.0,
+          431.0
+        ],
+        "conf": 0.7755983471870422,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 3,
+    "start_time": 4.0,
+    "end_time": 6.0,
+    "last_frame_index": 359,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1128.0,
+          30.0,
+          1761.0,
+          1066.0
+        ],
+        "face_bbox": [
+          1128.0,
+          30.0,
+          1761.0,
+          392.0
+        ],
+        "conf": 0.882994532585144,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          246.0,
+          91.0,
+          964.0,
+          1065.0
+        ],
+        "face_bbox": [
+          246.0,
+          91.0,
+          964.0,
+          431.0
+        ],
+        "conf": 0.8322414755821228,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          305.0,
+          495.0,
+          541.0,
+          643.0
+        ],
+        "face_bbox": [
+          305.0,
+          495.0,
+          541.0,
+          546.0
+        ],
+        "conf": 0.5495938658714294,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 4,
+    "start_time": 6.0,
+    "end_time": 8.0,
+    "last_frame_index": 479,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1127.0,
+          24.0,
+          1757.0,
+          1067.0
+        ],
+        "face_bbox": [
+          1127.0,
+          24.0,
+          1757.0,
+          389.0
+        ],
+        "conf": 0.8541865348815918,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          247.0,
+          88.0,
+          964.0,
+          1065.0
+        ],
+        "face_bbox": [
+          247.0,
+          88.0,
+          964.0,
+          429.0
+        ],
+        "conf": 0.8539640307426453,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 5,
+    "start_time": 8.0,
+    "end_time": 10.0,
+    "last_frame_index": 599,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1128.0,
+          25.0,
+          1758.0,
+          1068.0
+        ],
+        "face_bbox": [
+          1128.0,
+          25.0,
+          1758.0,
+          390.0
+        ],
+        "conf": 0.8813168406486511,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          255.0,
+          88.0,
+          969.0,
+          1064.0
+        ],
+        "face_bbox": [
+          255.0,
+          88.0,
+          969.0,
+          429.0
+        ],
+        "conf": 0.8679533004760742,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          313.0,
+          511.0,
+          547.0,
+          644.0
+        ],
+        "face_bbox": [
+          313.0,
+          511.0,
+          547.0,
+          557.0
+        ],
+        "conf": 0.5913091897964478,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 6,
+    "start_time": 10.0,
+    "end_time": 12.0,
+    "last_frame_index": 719,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1132.0,
+          23.0,
+          1759.0,
+          1066.0
+        ],
+        "face_bbox": [
+          1132.0,
+          23.0,
+          1759.0,
+          388.0
+        ],
+        "conf": 0.8752644658088684,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          246.0,
+          90.0,
+          969.0,
+          1059.0
+        ],
+        "face_bbox": [
+          246.0,
+          90.0,
+          969.0,
+          429.0
+        ],
+        "conf": 0.8729385733604431,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          1202.0,
+          360.0,
+          1332.0,
+          507.0
+        ],
+        "face_bbox": [
+          1202.0,
+          360.0,
+          1332.0,
+          411.0
+        ],
+        "conf": 0.7867894172668457,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          273.0,
+          497.0,
+          545.0,
+          659.0
+        ],
+        "face_bbox": [
+          273.0,
+          497.0,
+          545.0,
+          553.0
+        ],
+        "conf": 0.6655062437057495,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 7,
+    "start_time": 12.0,
+    "end_time": 14.0,
+    "last_frame_index": 839,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          316.0,
+          491.0,
+          549.0,
+          635.0
+        ],
+        "face_bbox": [
+          316.0,
+          491.0,
+          549.0,
+          541.0
+        ],
+        "conf": 0.915463387966156,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          1131.0,
+          33.0,
+          1805.0,
+          1070.0
+        ],
+        "face_bbox": [
+          1131.0,
+          33.0,
+          1805.0,
+          395.0
+        ],
+        "conf": 0.8951550126075745,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          260.0,
+          87.0,
+          971.0,
+          1064.0
+        ],
+        "face_bbox": [
+          260.0,
+          87.0,
+          971.0,
+          428.0
+        ],
+        "conf": 0.8567461371421814,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          1220.0,
+          351.0,
+          1343.0,
+          489.0
+        ],
+        "face_bbox": [
+          1220.0,
+          351.0,
+          1343.0,
+          399.0
+        ],
+        "conf": 0.5360631346702576,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 8,
+    "start_time": 14.0,
+    "end_time": 16.0,
+    "last_frame_index": 959,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1138.0,
+          46.0,
+          1837.0,
+          1070.0
+        ],
+        "face_bbox": [
+          1138.0,
+          46.0,
+          1837.0,
+          404.0
+        ],
+        "conf": 0.8885343074798584,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          262.0,
+          92.0,
+          971.0,
+          1065.0
+        ],
+        "face_bbox": [
+          262.0,
+          92.0,
+          971.0,
+          432.0
+        ],
+        "conf": 0.8493906855583191,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          1211.0,
+          344.0,
+          1336.0,
+          489.0
+        ],
+        "face_bbox": [
+          1211.0,
+          344.0,
+          1336.0,
+          394.0
+        ],
+        "conf": 0.6102187037467957,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          323.0,
+          487.0,
+          552.0,
+          631.0
+        ],
+        "face_bbox": [
+          323.0,
+          487.0,
+          552.0,
+          537.0
+        ],
+        "conf": 0.5105687379837036,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 9,
+    "start_time": 16.0,
+    "end_time": 18.0,
+    "last_frame_index": 1079,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1201.0,
+          339.0,
+          1339.0,
+          482.0
+        ],
+        "face_bbox": [
+          1201.0,
+          339.0,
+          1339.0,
+          389.0
+        ],
+        "conf": 0.8432310819625854,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          1128.0,
+          17.0,
+          1752.0,
+          1068.0
+        ],
+        "face_bbox": [
+          1128.0,
+          17.0,
+          1752.0,
+          384.0
+        ],
+        "conf": 0.8404003977775574,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          258.0,
+          70.0,
+          971.0,
+          1065.0
+        ],
+        "face_bbox": [
+          258.0,
+          70.0,
+          971.0,
+          418.0
+        ],
+        "conf": 0.8347643613815308,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          318.0,
+          516.0,
+          548.0,
+          665.0
+        ],
+        "face_bbox": [
+          318.0,
+          516.0,
+          548.0,
+          568.0
+        ],
+        "conf": 0.5387227535247803,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 10,
+    "start_time": 18.0,
+    "end_time": 20.0,
+    "last_frame_index": 1199,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1149.0,
+          86.0,
+          1883.0,
+          1064.0
+        ],
+        "face_bbox": [
+          1149.0,
+          86.0,
+          1883.0,
+          428.0
+        ],
+        "conf": 0.9081888198852539,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          248.0,
+          72.0,
+          974.0,
+          1064.0
+        ],
+        "face_bbox": [
+          248.0,
+          72.0,
+          974.0,
+          419.0
+        ],
+        "conf": 0.8158441781997681,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          318.0,
+          524.0,
+          551.0,
+          664.0
+        ],
+        "face_bbox": [
+          318.0,
+          524.0,
+          551.0,
+          573.0
+        ],
+        "conf": 0.5672782063484192,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 11,
+    "start_time": 20.0,
+    "end_time": 22.0,
+    "last_frame_index": 1319,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1146.0,
+          103.0,
+          1821.0,
+          1068.0
+        ],
+        "face_bbox": [
+          1146.0,
+          103.0,
+          1821.0,
+          440.0
+        ],
+        "conf": 0.8887523412704468,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          150.0,
+          70.0,
+          984.0,
+          1068.0
+        ],
+        "face_bbox": [
+          150.0,
+          70.0,
+          984.0,
+          419.0
+        ],
+        "conf": 0.8585414886474609,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 12,
+    "start_time": 22.0,
+    "end_time": 24.0,
+    "last_frame_index": 1439,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1155.0,
+          94.0,
+          1838.0,
+          1070.0
+        ],
+        "face_bbox": [
+          1155.0,
+          94.0,
+          1838.0,
+          435.0
+        ],
+        "conf": 0.8978606462478638,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          12.0,
+          61.0,
+          995.0,
+          1070.0
+        ],
+        "face_bbox": [
+          12.0,
+          61.0,
+          995.0,
+          414.0
+        ],
+        "conf": 0.8468582034111023,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 13,
+    "start_time": 24.0,
+    "end_time": 26.0,
+    "last_frame_index": 1559,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1124.0,
+          24.0,
+          1800.0,
+          1068.0
+        ],
+        "face_bbox": [
+          1124.0,
+          24.0,
+          1800.0,
+          389.0
+        ],
+        "conf": 0.9016029238700867,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          241.0,
+          107.0,
+          968.0,
+          1066.0
+        ],
+        "face_bbox": [
+          241.0,
+          107.0,
+          968.0,
+          442.0
+        ],
+        "conf": 0.8173825144767761,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 14,
+    "start_time": 26.0,
+    "end_time": 28.0,
+    "last_frame_index": 1679,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          50.0,
+          119.0,
+          916.0,
+          1069.0
+        ],
+        "face_bbox": [
+          50.0,
+          119.0,
+          916.0,
+          451.0
+        ],
+        "conf": 0.8943164944648743,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          1070.0,
+          88.0,
+          1801.0,
+          1063.0
+        ],
+        "face_bbox": [
+          1070.0,
+          88.0,
+          1801.0,
+          429.0
+        ],
+        "conf": 0.8406561613082886,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 15,
+    "start_time": 28.0,
+    "end_time": 30.0,
+    "last_frame_index": 1799,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1066.0,
+          182.0,
+          1707.0,
+          1068.0
+        ],
+        "face_bbox": [
+          1066.0,
+          182.0,
+          1707.0,
+          492.0
+        ],
+        "conf": 0.9008704423904419,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          151.0,
+          154.0,
+          906.0,
+          1069.0
+        ],
+        "face_bbox": [
+          151.0,
+          154.0,
+          906.0,
+          474.0
+        ],
+        "conf": 0.8395024538040161,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 16,
+    "start_time": 30.0,
+    "end_time": 32.0,
+    "last_frame_index": 1919,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          35.0,
+          145.0,
+          906.0,
+          1069.0
+        ],
+        "face_bbox": [
+          35.0,
+          145.0,
+          906.0,
+          468.0
+        ],
+        "conf": 0.810085654258728,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          963.0,
+          88.0,
+          1712.0,
+          1067.0
+        ],
+        "face_bbox": [
+          963.0,
+          88.0,
+          1712.0,
+          430.0
+        ],
+        "conf": 0.7855582237243652,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 17,
+    "start_time": 32.0,
+    "end_time": 34.0,
+    "last_frame_index": 2039,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1074.0,
+          207.0,
+          1760.0,
+          1068.0
+        ],
+        "face_bbox": [
+          1074.0,
+          207.0,
+          1760.0,
+          508.0
+        ],
+        "conf": 0.9209464192390442,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          3.0,
+          139.0,
+          908.0,
+          1068.0
+        ],
+        "face_bbox": [
+          3.0,
+          139.0,
+          908.0,
+          464.0
+        ],
+        "conf": 0.9016690850257874,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 18,
+    "start_time": 34.0,
+    "end_time": 36.0,
+    "last_frame_index": 2159,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1064.0,
+          194.0,
+          1718.0,
+          1067.0
+        ],
+        "face_bbox": [
+          1064.0,
+          194.0,
+          1718.0,
+          499.0
+        ],
+        "conf": 0.9294753670692444,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          38.0,
+          77.0,
+          901.0,
+          1067.0
+        ],
+        "face_bbox": [
+          38.0,
+          77.0,
+          901.0,
+          423.0
+        ],
+        "conf": 0.8621851205825806,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 19,
+    "start_time": 36.0,
+    "end_time": 38.0,
+    "last_frame_index": 2279,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1053.0,
+          88.0,
+          1707.0,
+          1066.0
+        ],
+        "face_bbox": [
+          1053.0,
+          88.0,
+          1707.0,
+          430.0
+        ],
+        "conf": 0.8905500173568726,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          22.0,
+          57.0,
+          890.0,
+          1069.0
+        ],
+        "face_bbox": [
+          22.0,
+          57.0,
+          890.0,
+          411.0
+        ],
+        "conf": 0.8791416883468628,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 20,
+    "start_time": 38.0,
+    "end_time": 40.0,
+    "last_frame_index": 2399,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1025.0,
+          186.0,
+          1635.0,
+          1068.0
+        ],
+        "face_bbox": [
+          1025.0,
+          186.0,
+          1635.0,
+          494.0
+        ],
+        "conf": 0.9047491550445557,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          12.0,
+          98.0,
+          860.0,
+          1067.0
+        ],
+        "face_bbox": [
+          12.0,
+          98.0,
+          860.0,
+          437.0
+        ],
+        "conf": 0.8317141532897949,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 21,
+    "start_time": 40.0,
+    "end_time": 42.0,
+    "last_frame_index": 2519,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          1104.0,
+          245.0,
+          1721.0,
+          1068.0
+        ],
+        "face_bbox": [
+          1104.0,
+          245.0,
+          1721.0,
+          533.0
+        ],
+        "conf": 0.8914666771888733,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          6.0,
+          163.0,
+          867.0,
+          1067.0
+        ],
+        "face_bbox": [
+          6.0,
+          163.0,
+          867.0,
+          479.0
+        ],
+        "conf": 0.883889377117157,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 22,
+    "start_time": 42.0,
+    "end_time": 44.0,
+    "last_frame_index": 2639,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          631.0,
+          102.0,
+          1916.0,
+          1066.0
+        ],
+        "face_bbox": [
+          631.0,
+          102.0,
+          1916.0,
+          439.0
+        ],
+        "conf": 0.8353760838508606,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 23,
+    "start_time": 44.0,
+    "end_time": 46.0,
+    "last_frame_index": 2759,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          83.0,
+          186.0,
+          855.0,
+          1068.0
+        ],
+        "face_bbox": [
+          83.0,
+          186.0,
+          855.0,
+          494.0
+        ],
+        "conf": 0.8701173067092896,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          1014.0,
+          257.0,
+          1910.0,
+          1068.0
+        ],
+        "face_bbox": [
+          1014.0,
+          257.0,
+          1910.0,
+          540.0
+        ],
+        "conf": 0.8144140243530273,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 24,
+    "start_time": 46.0,
+    "end_time": 48.0,
+    "last_frame_index": 2879,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          699.0,
+          17.0,
+          1920.0,
+          1066.0
+        ],
+        "face_bbox": [
+          699.0,
+          17.0,
+          1920.0,
+          384.0
+        ],
+        "conf": 0.8119177222251892,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 25,
+    "start_time": 48.0,
+    "end_time": 50.0,
+    "last_frame_index": 2999,
+    "target_face_id": 1,
+    "faces_in_last_frame": [
+      {
+        "id": 1,
+        "bbox": [
+          112.0,
+          229.0,
+          858.0,
+          1069.0
+        ],
+        "face_bbox": [
+          112.0,
+          229.0,
+          858.0,
+          523.0
+        ],
+        "conf": 0.898047149181366,
+        "label": "Face 1"
+      },
+      {
+        "id": 1,
+        "bbox": [
+          1092.0,
+          271.0,
+          1765.0,
+          1067.0
+        ],
+        "face_bbox": [
+          1092.0,
+          271.0,
+          1765.0,
+          549.0
+        ],
+        "conf": 0.7289238572120667,
+        "label": "Face 1"
+      }
+    ],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  },
+  {
+    "chunk_index": 26,
+    "start_time": 50.0,
+    "end_time": 51.283,
+    "last_frame_index": 3076,
+    "target_face_id": -1,
+    "faces_in_last_frame": [],
+    "source": "face_tracking_yolo",
+    "yolo_model": "yolov8n.pt"
+  }
+]
