@@ -22,6 +22,7 @@ from face_detection import FaceTracker, load_yolo_model, detect_faces_yolo, visu
 from face_analysis import get_face_embedding, analyze_emotions, match_known_face, load_known_faces
 from gaze import load_gaze_model, run_gaze_estimation
 from profile_manager import update_profiles, recluster_profiles
+from transcription import LOCAL_VIDEO_PATH, transcribe_audio_stream
 from visualization import visualize_all
 from llm_output import create_llm_input
 
@@ -476,6 +477,9 @@ def analyze_video_frames_with_tracking(image_paths, face_tracker, gaze_model, kn
         profile_assignment_map, final_profiles, frame_dimensions
     )
 
+    # -- Stage 5 --
+    lines = transcribe_audio_stream(LOCAL_VIDEO_PATH)
+
     # Combine results
     overall_results = final_frame_results # Add the frame data
     overall_results["profiles"] = final_profiles
@@ -483,7 +487,7 @@ def analyze_video_frames_with_tracking(image_paths, face_tracker, gaze_model, kn
 
     # --- Stage 5: Generate LLM Input ---
     print("\n--- Stage 5: Generating LLM Input JSON ---")
-    llm_data = create_llm_input(overall_results, config.LLM_OUTPUT_PATH)
+    llm_data = create_llm_input(overall_results, lines, config.LLM_OUTPUT_PATH)
 
     end_time = time.time()
     print(f"\nAnalysis complete. Total time: {end_time - start_time:.2f} seconds.")

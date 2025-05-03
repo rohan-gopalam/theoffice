@@ -1,119 +1,215 @@
 import json
 import numpy as np
 import os  # Adding the missing import
-from utils import NumpyEncoder # Use the custom encoder
-
-class NpEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        if isinstance(obj, np.floating):
-            return float(obj)
-        if isinstance(obj, np.ndarray):
-            return obj.tolist() # Convert arrays to lists
-        return super(NpEncoder, self).default(obj)
+from utils import NumpyEncoder
+from transcription import group_transcriptions_by_time # Use the custom encoder
 
 
-def create_llm_input(overall_results, output_path):
+def create_llm_input(results_data,  transcript_lines=None, output_path="llm_analysis_input.json"):
     """
-    Transforms the analysis results into a JSON structure suitable for LLMs,
-    ensuring necessary IDs and bounding boxes are included per person per frame.
+    Convert analysis results to a structured JSON file for LLM consumption,
+    removing bounding boxes and natural language summaries. Correctly identifies
+    gaze targets between people.
 
     Args:
-        overall_results (dict): The dictionary containing 'profiles' and
-                                frame data keyed by image paths (e.g., result
-                                from analyze_video_frames_with_tracking).
-        output_path (str): The path where the JSON file should be saved.
+        results_data: The main analysis result dictionary containing 'profiles'
+                      and frame-by-frame data.
+        output_path: Path to save the JSON file.
 
     Returns:
-        dict: The generated dictionary representing the LLM input JSON.
+        The structured data dictionary suitable for LLM input.
     """
-    llm_data = {}
-    frame_analysis_list = []
-
-    # --- Create Session Summary ---
-    # (Assuming 'profiles' key exists in overall_results)
-    profiles_summary = {}
-    final_profiles = overall_results.get("profiles", {})
-    for profile_id, profile_data in final_profiles.items():
-        profiles_summary[profile_id] = {
-            "assigned_name": profile_data.get("name", f"Person {profile_id}"),
-            "appeared_in_frame_indices": profile_data.get("frames_seen", [])
-            # Add other summary info if needed
-        }
-
-    llm_data["session_summary"] = {
-        "total_frames_processed": len(overall_results) - 1, # Subtract 1 for 'profiles' key
-        "distinct_people_identified": profiles_summary
+    llm_data = {
+        "session_summary": {
+            "total_frames_processed": len([k for k in results_data.keys() if k not in ['profiles', 'visualizations']]),
+            "distinct_people_identified": {} # Summary based on FINAL profiles
+        },
+        "frame_by_frame_analysis": []
     }
 
-
-    # --- Create Frame-by-Frame Analysis List ---
-    # Iterate through the frames in overall_results
-    # Sort keys to ensure consistent frame order if keys are filenames/paths
-    frame_keys = sorted([k for k in overall_results.keys() if k != "profiles" and k != "visualizations"])
-
-    for img_path in frame_keys:
-        frame_data = overall_results.get(img_path, {})
-        faces_in_frame_data = frame_data.get("faces", [])
-        people_output_list = []
-
-        # Process each face found in this frame
-        for face_obj in faces_in_frame_data:
-            # *** Extract the required data ***
-            person_output = {
-                "name": face_obj.get("name"),
-                "profile_id": face_obj.get("profile_id"), # <<< FINAL CLUSTERED ID
-                "tracker_id": face_obj.get("yolo_track_id"), # <<< ORIGINAL TRACKER ID
-                "bbox_pixels": face_obj.get("bbox_pixels"), # <<< BOUNDING BOX
-                "emotion_detected": face_obj.get("emotion"), # Assuming emotion is stored directly
-                "gaze_info": { # Reconstruct gaze info if needed
-                    "looking_at_camera": face_obj.get("gaze", {}).get("looking_at_camera"),
-                    "inout_score": face_obj.get("gaze", {}).get("inout_score"),
-                    # Add heatmap if you want it in the final JSON
-                    # "heatmap": face_obj.get("gaze", {}).get("heatmap")
-                },
-                # Add other relevant fields like known_identity_match if desired
-                "known_identity_match": face_obj.get("known_identity_match"),
-                "known_identity_score": face_obj.get("known_identity_score"),
-            }
-            # Clean up None values if desired (optional)
-            # person_output = {k: v for k, v in person_output.items() if v is not None}
-            people_output_list.append(person_output)
-
-        # Create the entry for this frame
-        frame_entry = {
-            # Use basename if img_path is a full path
-            "frame_identifier": os.path.basename(img_path),
-            "people_in_frame": people_output_list
+    # Populate session summary with final profile information
+    final_profiles = results_data.get('profiles', {})
+    for final_pid, prof_info in final_profiles.items():
+        # Use the final assigned ID (e.g., 1, 2, 3...) as the key in the summary
+        llm_data["session_summary"]["distinct_people_identified"][str(final_pid)] = {
+            "assigned_name": prof_info.get('name', f"Person {final_pid}"),
+            "appeared_in_frame_indices": prof_info.get('frames_seen', [])
         }
-        frame_analysis_list.append(frame_entry)
 
-    llm_data["frame_by_frame_analysis"] = frame_analysis_list
+    if transcript_lines:
+        transcript_buckets = group_transcriptions_by_time(transcript_lines)
+    else:
+        transcript_buckets = {}
 
-    # --- Add Chunk Metadata (if available/passed) ---
-    # This part depends on how you handle chunking; it might be added
-    # later in the process_video_in_chunks function as you currently do.
-    # llm_data["chunk_metadata"] = overall_results.get("chunk_metadata", {})
+    # Populate frame-by-frame analysis
+    for frame_path, frame_data in results_data.items():
+        if frame_path in ['profiles', 'visualizations']:
+            continue # Skip metadata keys
+
+        frame_entry = {
+            "frame_identifier": os.path.basename(frame_path), # Use filename as identifier
+            "people_in_frame": []
+        }
 
 
-    # --- Save the JSON ---
-    try:
-        # Use NpEncoder if you include NumPy arrays (like heatmaps)
-        with open(output_path, 'w') as f:
-            json.dump(llm_data, f, indent=2, cls=NpEncoder)
-        print(f"Successfully saved LLM input JSON to {output_path}")
-    except TypeError as e:
-        print(f"Error saving JSON (possibly due to non-serializable data like NumPy arrays without NpEncoder): {e}")
-        # Fallback: try saving without NpEncoder if you didn't include arrays
         try:
-            with open(output_path, 'w') as f:
-                 json.dump(llm_data, f, indent=2)
-            print(f"Successfully saved LLM input JSON to {output_path} (without NpEncoder)")
-        except Exception as e_inner:
-            print(f"Error saving JSON even without NpEncoder: {e_inner}")
+            frame_index = int(os.path.splitext(os.path.basename(frame_path))[0].split("_")[-1])
+            frame_time_sec = frame_index  # Assuming 1 FPS
+            bucket_index = int(frame_time_sec // 10)
+            if bucket_index in transcript_buckets:
+                frame_entry["dialogue_in_chunk"] = transcript_buckets[bucket_index]
+        except Exception as e:
+            print(f"Could not determine dialogue chunk for {frame_path}: {e}")
 
+        # First pass: gather all people and their bounding boxes
+        people_with_boxes = []
+        for face_info in frame_data.get('faces', []):
+            final_profile_id = face_info.get('profile_id')
+            person_name = "Unknown"
+            if final_profile_id is not None and final_profile_id in final_profiles:
+                 person_name = final_profiles[final_profile_id].get('name', f"Person {final_profile_id}")
+
+            # Extract emotion information - handle both string and dictionary formats
+            emotion_data = face_info.get('emotion', "Unknown")
+            
+            # Store person with their bounding box for gaze target detection
+            people_with_boxes.append({
+                "name": person_name,
+                "emotion_detected": emotion_data,
+                "gaze_info": face_info.get('gaze', {}),
+                "bbox": face_info['bbox_pixels'],  # Keep bbox temporarily for gaze calculation
+                "profile_id": final_profile_id
+            })
+
+        # Second pass: create final output with gaze targets
+        for person in people_with_boxes:
+            # Prepare person data without bounding box
+            person_data = {
+                "name": person["name"],
+                "emotion_detected": person["emotion_detected"],
+                "gaze_info": None  # Default value
+            }
+
+            # Add gaze target information if available
+            gaze_info = person.get("gaze_info", {})
+            if gaze_info:
+                gaze_data = {}
+                
+                # Only mark as looking at camera if confidence is very high
+                camera_confidence_threshold = 0.5  # Strict threshold to avoid false positives
+                if ("looking_at_camera" in gaze_info and 
+                    gaze_info["looking_at_camera"] and 
+                    gaze_info.get("inout_score", 0) > camera_confidence_threshold):
+                    gaze_data["gaze_target"] = "camera"
+                    
+                # Check if looking at another person based on unnormalized gaze target
+                elif "estimated_gaze_target_normalized" in gaze_info:
+                    target = gaze_info["estimated_gaze_target_normalized"]
+                    
+                    # Get unnormalized coordinates
+                    if isinstance(target, dict) and "x" in target and "y" in target:
+                        # Calculate reasonable image dimensions
+                        max_x = max(p["bbox"][2] for p in people_with_boxes) + 100  # Add padding
+                        max_y = max(p["bbox"][3] for p in people_with_boxes) + 100  # Add padding
+                        
+                        # Convert normalized to absolute coordinates
+                        gaze_x = int(target["x"] * max_x)
+                        gaze_y = int(target["y"] * max_y)
+                        
+                        # Store the unnormalized coordinates
+                        gaze_data["unnormalized_gaze_point"] = {"x": gaze_x, "y": gaze_y}
+                        
+                        # Look for a person target using expanded bounding boxes
+                        person_target_found = False
+                        for other_person in people_with_boxes:
+                            if other_person["name"] == person["name"]:
+                                continue  # Skip self
+                            
+                            # Get bounding box
+                            x1, y1, x2, y2 = other_person["bbox"]
+                            box_width = x2 - x1
+                            box_height = y2 - y1
+                            
+                            # Expand by 25% in each direction for more forgiving detection
+                            x1_expanded = max(0, x1 - int(box_width * 0.25))
+                            y1_expanded = max(0, y1 - int(box_height * 0.25))
+                            x2_expanded = min(max_x, x2 + int(box_width * 0.25))
+                            y2_expanded = min(max_y, y2 + int(box_height * 0.25))
+                            
+                            # Check if gaze point is in expanded box
+                            if x1_expanded <= gaze_x <= x2_expanded and y1_expanded <= gaze_y <= y2_expanded:
+                                gaze_data["gaze_target"] = other_person["name"]
+                                gaze_data["target_profile_id"] = other_person["profile_id"]
+                                person_target_found = True
+                                break
+                        
+                        # If no specific person target found, set to "other"
+                        if not person_target_found:
+                            gaze_data["gaze_target"] = "other"
+                    else:
+                        gaze_data["gaze_target"] = "other"
+                elif "heatmap" in gaze_info:
+                    # Handle heatmap-based gaze similarly to above
+                    heatmap = gaze_info["heatmap"]
+                    if isinstance(heatmap, (np.ndarray, list)):
+                        heatmap_np = np.array(heatmap)
+                        if heatmap_np.ndim == 2 and heatmap_np.size > 0:
+                            max_idx = np.unravel_index(np.argmax(heatmap_np), heatmap_np.shape)
+                            norm_y, norm_x = max_idx[0] / heatmap_np.shape[0], max_idx[1] / heatmap_np.shape[1]
+                            
+                            # Calculate reasonable image dimensions
+                            max_x = max(p["bbox"][2] for p in people_with_boxes) + 100
+                            max_y = max(p["bbox"][3] for p in people_with_boxes) + 100
+                            
+                            # Convert normalized to absolute coordinates
+                            gaze_x = int(norm_x * max_x)
+                            gaze_y = int(norm_y * max_y)
+                            
+                            # Store the unnormalized coordinates
+                            gaze_data["unnormalized_gaze_point"] = {"x": gaze_x, "y": gaze_y}
+                            
+                            # Same person detection logic as above
+                            person_target_found = False
+                            for other_person in people_with_boxes:
+                                if other_person["name"] == person["name"]:
+                                    continue
+                                
+                                x1, y1, x2, y2 = other_person["bbox"]
+                                box_width = x2 - x1
+                                box_height = y2 - y1
+                                
+                                x1_expanded = max(0, x1 - int(box_width * 0.25))
+                                y1_expanded = max(0, y1 - int(box_height * 0.25))
+                                x2_expanded = min(max_x, x2 + int(box_width * 0.25))
+                                y2_expanded = min(max_y, y2 + int(box_height * 0.25))
+                                
+                                if x1_expanded <= gaze_x <= x2_expanded and y1_expanded <= gaze_y <= y2_expanded:
+                                    gaze_data["gaze_target"] = other_person["name"]
+                                    gaze_data["target_profile_id"] = other_person["profile_id"]
+                                    person_target_found = True
+                                    break
+                            
+                            if not person_target_found:
+                                gaze_data["gaze_target"] = "other"
+                        else:
+                            gaze_data["gaze_target"] = "other"
+                    else:
+                        gaze_data["gaze_target"] = "other"
+                else:
+                    gaze_data["gaze_target"] = "other"
+                
+                person_data["gaze_info"] = gaze_data
+
+            frame_entry["people_in_frame"].append(person_data)
+
+        llm_data["frame_by_frame_analysis"].append(frame_entry)
+
+    # Save the JSON file
+    try:
+        with open(output_path, 'w') as f:
+            json.dump(llm_data, f, indent=2, cls=NumpyEncoder)
+        print(f"LLM analysis input saved successfully to {output_path}")
     except Exception as e:
-        print(f"An error occurred saving the JSON: {e}")
+        print(f"Error saving LLM JSON to {output_path}: {e}")
 
-    return llm_data # Return the dictionary as well
+    return llm_data
