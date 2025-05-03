@@ -75,7 +75,7 @@ def transcribe_audio_stream(audio_url):
                     current_start_time = word_info.start_time.total_seconds()
                 else:
                     # Same speaker, add to current sentence
-                    if current_end_time - current_start_time < 10:
+                    if current_end_time - current_start_time < 30:
                         current_sentence.append(word_info)
                     # if one person talking for > 10 seconds send to new chunk
                     else: 
@@ -107,7 +107,7 @@ def transcribe_audio_stream(audio_url):
     finally:
         process.terminate()
 
-def group_transcripts_by_time(transcripts, window_size=10):
+def group_transcripts_by_time(transcripts, window_size=30):
     """
     Group transcript entries into fixed-size time chunks.
 
