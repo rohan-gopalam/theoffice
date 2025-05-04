@@ -7,7 +7,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # --- Input Video & Frame Extraction ---
 # **** IMPORTANT: SET YOUR VIDEO PATH HERE ****
-VIDEO_INPUT_PATH = "/Users/aditya/Documents/code projects/theoffice/videos/ween.mp4" # <--- CHANGE THIS TO YOUR VIDEO FILE
+VIDEO_INPUT_PATH = "/Users/rgopalam/Desktop/office_clips/20250312_FineDrabTardigradeAMPTropPunch-v5zAsfIVNJNlkktn_source.mp4" # <--- CHANGE THIS TO YOUR VIDEO FILE
 FRAMES_PER_SECOND_TO_EXTRACT = 1 # Extract 1 frame per second. Set to 0 or None for all frames.
 
 # --- Output Directories ---
