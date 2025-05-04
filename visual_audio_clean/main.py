@@ -534,7 +534,25 @@ def display_analysis_results(results):
 # -----------------------------
 # Main Execution Block
 # -----------------------------
+  
 if __name__ == "__main__":
+    import sys
+    import os
+    
+    # Handle CLI input
+    video_path = sys.argv[1] if len(sys.argv) > 1 else config.VIDEO_INPUT_PATH
+
+    # Dynamically derive output directory name
+    base_name = os.path.splitext(os.path.basename(video_path))[0]
+    config.OUTPUT_DIR = os.path.join("output", base_name)
+
+    # Also update this for completeness
+    config.VIDEO_INPUT_PATH = video_path
+
+    print(f"📽️  Processing {video_path}")
+    print(f"📁  Saving outputs to {config.OUTPUT_DIR}")
+
+    ###
     print("--- Starting Chunked Video Analysis Pipeline with Face Tracking ---")
     
     if not os.path.exists(config.VIDEO_INPUT_PATH):
@@ -545,5 +563,5 @@ if __name__ == "__main__":
     # Process the video in chunks using face tracking
     process_video_in_chunks(
         config.VIDEO_INPUT_PATH,
-        chunk_duration=30  # 30-second chunks
+        chunk_duration=10  # 30-second chunks
     )

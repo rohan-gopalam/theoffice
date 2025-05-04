@@ -71,27 +71,29 @@ def fill_per_second(chunks, data_path, base_fps=30, maxchunks=100):
     return timeline
 
 if __name__ == '__main__':
-    here = os.path.dirname(os.path.abspath(__file__))
-    if len(sys.argv) == 2:
-        json_path = sys.argv[1]
-    else:
-        json_path = os.path.join(here, 'clip4file.json')
+    if len(sys.argv) != 3:
+        print("Usage: python process_output.py path/to/labeler.json path/to/output_chunks_dir")
+        sys.exit(1)
 
-    # load markers
+    json_path = sys.argv[1]
+    chunks_dir = sys.argv[2]
+
+    # Load and display stats
     with open(json_path, 'r') as f:
         data = json.load(f)
 
-    # 1) (optional) print full time lists
     times_by_id = get_times_by_zoom_id(data)
     print("All times by zoom_target_id:")
-    # for zid, tlist in sorted(times_by_id.items()):
-    #     print(f"  id={zid:<5} → {len(tlist)} events")
+    for zid, tlist in sorted(times_by_id.items()):
+        print(f"  id={zid:<5} → {len(tlist)} events")
 
-    # 2) build per-second timeline
-    sec_timeline = fill_per_second(output_path, json_path)
+    # Build per-second timeline
+    sec_timeline = fill_per_second(chunks_dir, json_path)
 
-    # 3) save to output_filtered.json
-    out_path = os.path.join(here, 'output_filtered.json')
+    # Output path: output_filtered_<basename>.json
+    base_name = os.path.splitext(os.path.basename(json_path))[0]
+    out_path = os.path.join(os.path.dirname(json_path), f"output_filtered_{base_name}.json")
+
     with open(out_path, 'w') as out_f:
         json.dump(sec_timeline, out_f, indent=2)
 
