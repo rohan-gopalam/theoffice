@@ -6,7 +6,7 @@ import argparse  # Needed for parsing frame numbers from keys
 import closest_frame
 
 # --- Configuration ---
-DEFAULT_BASE_DIR = "./output" # Directory containing chunk_1, chunk_2, ...
+DEFAULT_BASE_DIR = "/Users/anaishadas/Desktop/theoffice/visual_audio_clean/output" # Directory containing chunk_1, chunk_2, ...
 DEFAULT_GROUND_TRUTH_PATH = "/Users/anaishadas/Desktop/theoffice/visual_audio_clean/clip4file.json"
 DEFAULT_FPS = 30
 DEFAULT_MAX_CHUNKS = 76
@@ -81,15 +81,16 @@ def find_closest_id(aligned_frame_identifier, people_in_frame, gt_entry):
 
     if not gt_bbox:
         # print(f"ERROR: Could not find bbox for ground truth target ID {gt_target_tracker_id} in GT data for frame {gt_frame_index}.")
-        return None, float('inf'), aligned_frame_identifier
+        return gt_bbox, float('inf'), aligned_frame_identifier
     gt_center = calculate_center(gt_bbox)
+    
     if not gt_center:
         # print(f"ERROR: Could not calculate center for ground truth bbox for frame {gt_frame_index}.")
         return None, float('inf'), aligned_frame_identifier
-    print(f"  Ground Truth Center: ({gt_center[0]:.2f}, {gt_center[1]:.2f}) for Tracker ID {gt_target_tracker_id}") # Optional
+    # print(f"  Ground Truth Center: ({gt_center[0]:.2f}, {gt_center[1]:.2f}) for Tracker ID {gt_target_tracker_id}") # Optional
 
     frame_centers = []
-    min_dist = None
+    min_dist = 10000000
     min_dist_id = None
     for people in people_in_frame:
         f_bbox = people["bbox"]
@@ -266,7 +267,7 @@ def run_alignment(analysis_base_dir, ground_truth_json_path, fps, max_chunks=100
             }
         results.append(result_entry)
 
-        analysis_curr_dir = analysis_base_dir + f"/chunk_{chunk}/analysis_chunk_{chunk}.json"
+        analysis_curr_dir = "/Users/anaishadas/Desktop/theoffice/visual_audio_clean/analysis_chunk_1.json"
 
         try:
             with open(analysis_curr_dir, 'r') as f:
@@ -278,8 +279,10 @@ def run_alignment(analysis_base_dir, ground_truth_json_path, fps, max_chunks=100
     
         analysis_frames_list = analysis_chunk_data.get("frame_by_frame_analysis", [])
         analysis_curr_frame = analysis_frames_list[frame_ind]
+        # print(analysis_curr_frame)
 
         people_in_frame = analysis_curr_frame.get("people_in_frame", [])
+        print(people_in_frame)
 
         closest_id = find_closest_id(frame_id, people_in_frame, gt_entry)
         result_entry["closest_profile_id"] = closest_id
