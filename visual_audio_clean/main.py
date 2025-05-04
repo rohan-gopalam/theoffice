@@ -544,12 +544,12 @@ Here is the complete analysis of the video:
         client = OpenAI()
         
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are an AI assistant specialized in video editing."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=4000,
+            max_tokens=10000,
             temperature=0.3
         )
         
@@ -701,12 +701,12 @@ Previous framing analysis:
         client = OpenAI()
         
         response = client.chat.completions.create(
-            model="gpt-4",
+            model="gpt-4o",
             messages=[
                 {"role": "system", "content": "You are an AI assistant specialized in video editing."},
                 {"role": "user", "content": prompt}
             ],
-            max_tokens=4000,
+            max_tokens=10000,
             temperature=0.3
         )
         
