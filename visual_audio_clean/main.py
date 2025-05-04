@@ -22,7 +22,7 @@ from face_detection import FaceTracker, load_yolo_model, detect_faces_yolo, visu
 from face_analysis import get_face_embedding, analyze_emotions, match_known_face, load_known_faces
 from gaze import load_gaze_model, run_gaze_estimation
 from profile_manager import update_profiles, recluster_profiles
-from transcription import LOCAL_VIDEO_PATH, transcribe_audio_stream
+from transcription import LOCAL_VIDEO_PATH, transcribe_audio_stream, group_transcripts_by_time
 from visualization import visualize_all
 from llm_output import create_llm_input
 
@@ -384,6 +384,7 @@ def process_video_in_chunks(video_path, chunk_duration=10):
             print(f"Running analysis on chunk {chunk_idx+1}...")
             analysis_results, llm_json_data = analyze_video_frames_with_tracking(
                 chunk_image_paths,
+                chunk_idx,
                 face_tracker,
                 gaze_model,
                 known_faces=known_faces_embeddings
@@ -429,7 +430,7 @@ def process_video_in_chunks(video_path, chunk_duration=10):
 
 
 # --- Updated Main Analysis Function (using Face Tracker) ---
-def analyze_video_frames_with_tracking(image_paths, face_tracker, gaze_model, known_faces=None):
+def analyze_video_frames_with_tracking(image_paths, chunk_idx, face_tracker, gaze_model, known_faces=None):
     """Orchestrates the frame-by-frame analysis using face tracking for better consistency."""
     start_time = time.time()
     overall_results = {}
@@ -478,7 +479,7 @@ def analyze_video_frames_with_tracking(image_paths, face_tracker, gaze_model, kn
     )
 
     # -- Stage 5 --
-    lines = transcribe_audio_stream(LOCAL_VIDEO_PATH)
+    transcript = transcribe_audio_stream(LOCAL_VIDEO_PATH, chunk_size=10)[chunk_idx]
 
     # Combine results
     overall_results = final_frame_results # Add the frame data
@@ -487,7 +488,7 @@ def analyze_video_frames_with_tracking(image_paths, face_tracker, gaze_model, kn
 
     # --- Stage 5: Generate LLM Input ---
     print("\n--- Stage 5: Generating LLM Input JSON ---")
-    llm_data = create_llm_input(overall_results, lines, config.LLM_OUTPUT_PATH)
+    llm_data = create_llm_input(overall_results, transcript, config.LLM_OUTPUT_PATH)
 
     end_time = time.time()
     print(f"\nAnalysis complete. Total time: {end_time - start_time:.2f} seconds.")
@@ -541,5 +542,5 @@ if __name__ == "__main__":
     # Process the video in chunks using face tracking
     process_video_in_chunks(
         config.VIDEO_INPUT_PATH,
-        chunk_duration=10  # 10-second chunks
+        chunk_duration=10  # 30-second chunks
     )

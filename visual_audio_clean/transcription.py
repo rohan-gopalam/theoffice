@@ -2,7 +2,7 @@ import os
 import subprocess
 import cv2
 import yt_dlp
-from google.cloud import speech
+from google.cloud import speech_v1p1beta1 as speech
 import threading
 import math
 
@@ -11,7 +11,7 @@ os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/aditya/Downloads/seismic-
 
 # Configuration
 USE_LOCAL_FILE = True
-LOCAL_VIDEO_PATH = "/Users/aditya/Documents/code projects/theoffice/videos/speedchina.mp4"
+LOCAL_VIDEO_PATH = "/Users/aditya/Documents/code projects/theoffice/videos/ween.mp4"
 # YOUTUBE_URL = "https://www.youtube.com/watch?v=96Y6mc3C1Bg"
 
 def format_time(time_sec):
@@ -19,13 +19,13 @@ def format_time(time_sec):
     seconds = int(time_sec)
     return f"{seconds}:{ms:03d}"
 
-def transcribe_audio_stream(audio_url):
+def transcribe_audio_stream(audio_url, chunk_size=30):
     """Stream audio for transcription using Google Cloud Speech-to-Text."""
     client = speech.SpeechClient()
 
     # Use ffmpeg to convert audio stream to raw PCM data
     ffmpeg_command = [
-        "ffmpeg", "-re", "-i", audio_url, "-f", "s16le", "-ac", "1", "-ar", "16000",
+        "ffmpeg", "-i", audio_url, "-f", "s16le", "-ac", "1", "-ar", "16000",
         "-loglevel", "quiet", "pipe:1"
     ]
     process = subprocess.Popen(ffmpeg_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -48,7 +48,7 @@ def transcribe_audio_stream(audio_url):
             yield data
 
     requests = (speech.StreamingRecognizeRequest(audio_content=chunk) for chunk in audio_generator())
-    responses = client.streaming_recognize(config=streaming_request, requests=requests)
+    responses = client.streaming_recognize(config=streaming_request, requests=requests, timeout = 600)
 
     try:
         for response in responses:
@@ -75,7 +75,7 @@ def transcribe_audio_stream(audio_url):
                     current_start_time = word_info.start_time.total_seconds()
                 else:
                     # Same speaker, add to current sentence
-                    if current_end_time - current_start_time < 30:
+                    if current_end_time - current_start_time < chunk_size:
                         current_sentence.append(word_info)
                     # if one person talking for > 10 seconds send to new chunk
                     else: 
@@ -97,7 +97,7 @@ def transcribe_audio_stream(audio_url):
         print(transcription)
 
     
-        buckets = group_transcripts_by_time(transcription, window_size=30)
+        buckets = group_transcripts_by_time(transcription, window_size=chunk_size)
 
         return buckets  # drop through after first batch
 
