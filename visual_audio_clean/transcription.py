@@ -2,116 +2,162 @@ import os
 import subprocess
 import cv2
 import yt_dlp
-from google.cloud import speech
+from google.cloud import speech_v1p1beta1 as speech
 import threading
+import math
 
 # Set Google Cloud credentials
-os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/preenamaru/desktop/launchpad/seismic-rarity-427422-p7-ab3b4a8726ef.json"
+os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/aditya/Downloads/seismic-rarity-427422-p7-ab3b4a8726ef.json"
 
 # Configuration
 USE_LOCAL_FILE = True
-LOCAL_VIDEO_PATH = "/Users/preenamaru/launchpad/theoffice-1/videos/ween.mp4"
-YOUTUBE_URL = "https://www.youtube.com/watch?v=96Y6mc3C1Bg"
+LOCAL_VIDEO_PATH = "/Users/aditya/Documents/code projects/theoffice/videos/ween.mp4"
+# YOUTUBE_URL = "https://www.youtube.com/watch?v=96Y6mc3C1Bg"
 
 def format_time(time_sec):
     ms = int((time_sec % 1) * 1000)
     seconds = int(time_sec)
     return f"{seconds}:{ms:03d}"
 
-def transcribe_audio_stream(source) -> list[str]:
-    """Extract audio from `source` (file or URL), speaker-diarize and return list of lines."""
+def transcribe_audio_stream(audio_url, chunk_size=30):
+    """Stream audio for transcription using Google Cloud Speech-to-Text."""
     client = speech.SpeechClient()
 
-    ffmpeg_cmd = [
-        "ffmpeg", "-i", source,
-        "-f", "s16le", "-ac", "1", "-ar", "16000",
+    # Use ffmpeg to convert audio stream to raw PCM data
+    ffmpeg_command = [
+        "ffmpeg", "-i", audio_url, "-f", "s16le", "-ac", "1", "-ar", "16000",
         "-loglevel", "quiet", "pipe:1"
     ]
-    proc = subprocess.Popen(ffmpeg_cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    process = subprocess.Popen(ffmpeg_command, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    diarization_config = speech.SpeakerDiarizationConfig(enable_speaker_diarization = True)
 
-    diar_cfg = speech.SpeakerDiarizationConfig(enable_speaker_diarization=True)
-    recog_cfg = speech.RecognitionConfig(
+    streaming_config = speech.RecognitionConfig(
         encoding=speech.RecognitionConfig.AudioEncoding.LINEAR16,
         sample_rate_hertz=16000,
         language_code="en-US",
-        diarization_config=diar_cfg
+        diarization_config = diarization_config
     )
+    
+    streaming_request = speech.StreamingRecognitionConfig(config=streaming_config, interim_results=True)
 
-    # 3) Build StreamingRecognitionConfig (only config + interim_results)
-    stream_cfg = speech.StreamingRecognitionConfig(
-        config=recog_cfg,
-        interim_results=True
-    )
-
-    def gen():
+    def audio_generator():
         while True:
-            chunk = proc.stdout.read(4096)
-            if not chunk:
+            data = process.stdout.read(4096)
+            if not data:
                 break
-            yield chunk
+            yield data
 
-    requests = (
-        speech.StreamingRecognizeRequest(audio_content=chunk)
-        for chunk in gen()
-    )
-    responses = client.streaming_recognize(
-        stream_cfg,
-        requests
-    )
+    requests = (speech.StreamingRecognizeRequest(audio_content=chunk) for chunk in audio_generator())
+    responses = client.streaming_recognize(config=streaming_request, requests=requests, timeout = 600)
 
-    lines = []
     try:
-        current_speaker = None
-        current_sentence = []
-        current_start = None
-
-        for resp in responses:
-            result = resp.results[-1]
-            for w in result.alternatives[0].words:
-                tag = w.speaker_tag
-                start = w.start_time.total_seconds()
-                word = w.word
-
-                if current_speaker is None:
-                    current_speaker = tag
-                    current_start = start
-
-                if tag != current_speaker:
-                    sent = " ".join(current_sentence)
-                    full = f"speaker {current_speaker} @ {format_time(current_start)} {sent}"
-                    if (full not in lines):
-                        lines.append(f"speaker {current_speaker} @ {format_time(current_start)} {sent}")
-                    current_speaker = tag
-                    current_sentence = [word]
-                    current_start = start
-                else:
-                    current_sentence.append(word)
-
-            if current_sentence:
-                sent = " ".join(current_sentence)
-                full = f"speaker {current_speaker} @ {format_time(current_start)} {sent}"
-                if (full not in lines):
-                    lines.append(f"speaker {current_speaker} @ {format_time(current_start)} {sent}")
-
-
+        for response in responses:
+            result = response.results[-1]
+            words_info = result.alternatives[0].words
             
+            current_speaker = None
+            current_sentence = []
+            transcription = []
+            
+            for word_info in words_info:
+                current_end_time = word_info.start_time.total_seconds()
+                if current_speaker is None:
+                    current_speaker = word_info.speaker_tag
+                    current_start_time = word_info.start_time.total_seconds()
+                if word_info.speaker_tag != current_speaker:
+                    # Speaker changed, create a new sentence
+                    sentence = " ".join([word.word for word in current_sentence])
+                    start_time = format_time(current_start_time)
+                    end_time = format_time(current_end_time)
+                    transcription.append({"speaker": current_speaker, "start": current_start_time, "end": current_end_time, "text": sentence})
+                    current_speaker = word_info.speaker_tag
+                    current_sentence = [word_info]
+                    current_start_time = word_info.start_time.total_seconds()
+                else:
+                    # Same speaker, add to current sentence
+                    if current_end_time - current_start_time < chunk_size:
+                        current_sentence.append(word_info)
+                    # if one person talking for > 10 seconds send to new chunk
+                    else: 
+                        sentence = " ".join([word.word for word in current_sentence])
+                        start_time = format_time(current_start_time)
+                        end_time = format_time(current_end_time)
+                        transcription.append({"speaker": current_speaker, "start": current_start_time, "end": current_end_time, "text": sentence})
+                        current_sentence = [word_info]
+                        current_start_time = word_info.start_time.total_seconds()
+    
+    # Add the last sentence if there's anything
+        if current_sentence:
+            sentence = " ".join([word.word for word in current_sentence])
+            start_time = format_time(current_start_time)
+            end_time = format_time(current_end_time)
+            transcription.append({"speaker": current_speaker, "start": current_start_time, "end": current_end_time, "text": sentence})
+        
+        print("\n--- Raw Transcripts ---")
+        print(transcription)
+
+    
+        buckets = group_transcripts_by_time(transcription, window_size=chunk_size)
+
+        return buckets  # drop through after first batch
+
+
+    except Exception as e:
+        print(f"Transcription error: {e}")
     finally:
-        proc.terminate()
+        process.terminate()
 
-    return lines
+def group_transcripts_by_time(transcripts, window_size=30):
+    """
+    Group transcript entries into fixed-size time chunks.
 
-def group_transcriptions_by_time(lines, chunk_duration=10):
-    time_buckets = {}
-    for line in lines:
-        try:
-            time_part = line.split("@")[1].split()[0].strip()
-            seconds, ms = map(int, time_part.split(":"))
-            total_seconds = seconds + ms / 1000.0
-            bucket_index = int(total_seconds // chunk_duration)
-            time_buckets.setdefault(bucket_index, []).append(line)
-        except Exception as e:
-            print(f"Error parsing line '{line}': {e}")
-    return time_buckets
+    Args:
+        transcripts (list of dict): each dict must have:
+            - 'start' (float): start time in seconds
+            - 'end'   (float): end time in seconds
+            - any other fields you need (e.g., 'speaker', 'text')
+        window_size (float): chunk duration in seconds (default 10)
+
+    Returns:
+        dict[int, list[dict]]: mapping chunk index → list of transcript dicts
+            Chunk 0 covers [first_window_start, first_window_start + window_size),
+            chunk 1 covers [first_window_start + window_size, …), etc.
+    """
+    if not transcripts:
+        return {}
+
+    # 1. Determine overall span
+    min_start = min(t["start"] for t in transcripts)
+    max_end   = max(t["end"]   for t in transcripts)
+
+    # 2. Align to multiples of window_size
+    first_window_start = math.floor(min_start / window_size) * window_size
+    last_window_end    = math.ceil (max_end   / window_size) * window_size
+
+    # 3. Number of chunks
+    total_chunks = int((last_window_end - first_window_start) / window_size)
+
+    # 4. Prepare output dict with empty lists
+    chunks = {i: [] for i in range(total_chunks)}
+
+    # 5. Assign each transcript to every chunk it overlaps
+    for t in transcripts:
+        # compute offset times relative to first_window_start
+        start_offset = t["start"] - first_window_start
+        end_offset   = t["end"]   - first_window_start
+
+        # compute chunk indices
+        start_idx = int(math.floor(start_offset / window_size))
+        end_idx   = int(math.floor((end_offset - 1e-9) / window_size))
+
+        # clamp indices to valid range
+        start_idx = max(0, min(start_idx, total_chunks - 1))
+        end_idx   = max(0, min(end_idx,   total_chunks - 1))
+
+        for idx in range(start_idx, end_idx + 1):
+            chunks[idx].append(t)
+
+    return chunks
 
 def play_video_with_transcription(video_src, audio_src):
     cap = cv2.VideoCapture(video_src)

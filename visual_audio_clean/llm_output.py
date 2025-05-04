@@ -2,10 +2,9 @@ import json
 import numpy as np
 import os  # Adding the missing import
 from utils import NumpyEncoder
-from transcription import group_transcriptions_by_time # Use the custom encoder
 
 
-def create_llm_input(results_data,  transcript_lines=None, output_path="llm_analysis_input.json"):
+def create_llm_input(results_data,  transcript=None, output_path="llm_analysis_input.json"):
     """
     Convert analysis results to a structured JSON file for LLM consumption,
     removing bounding boxes and natural language summaries. Correctly identifies
@@ -24,6 +23,7 @@ def create_llm_input(results_data,  transcript_lines=None, output_path="llm_anal
             "total_frames_processed": len([k for k in results_data.keys() if k not in ['profiles', 'visualizations']]),
             "distinct_people_identified": {} # Summary based on FINAL profiles
         },
+        "transcription of chunk": transcript,
         "frame_by_frame_analysis": []
     }
 
@@ -36,10 +36,6 @@ def create_llm_input(results_data,  transcript_lines=None, output_path="llm_anal
             "appeared_in_frame_indices": prof_info.get('frames_seen', [])
         }
 
-    if transcript_lines:
-        transcript_buckets = group_transcriptions_by_time(transcript_lines)
-    else:
-        transcript_buckets = {}
 
     # Populate frame-by-frame analysis
     for frame_path, frame_data in results_data.items():
@@ -52,14 +48,6 @@ def create_llm_input(results_data,  transcript_lines=None, output_path="llm_anal
         }
 
 
-        try:
-            frame_index = int(os.path.splitext(os.path.basename(frame_path))[0].split("_")[-1])
-            frame_time_sec = frame_index  # Assuming 1 FPS
-            bucket_index = int(frame_time_sec // 10)
-            if bucket_index in transcript_buckets:
-                frame_entry["dialogue_in_chunk"] = transcript_buckets[bucket_index]
-        except Exception as e:
-            print(f"Could not determine dialogue chunk for {frame_path}: {e}")
 
         # First pass: gather all people and their bounding boxes
         people_with_boxes = []
