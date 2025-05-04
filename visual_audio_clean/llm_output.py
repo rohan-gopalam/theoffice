@@ -4,7 +4,7 @@ import os  # Adding the missing import
 from utils import NumpyEncoder
 
 
-def create_llm_input(results_data,  transcript=None, output_path="llm_analysis_input.json"):
+def create_llm_input(results_data, transcript=None, output_path="llm_analysis_input.json", fps=30):
     """
     Convert analysis results to a structured JSON file for LLM consumption,
     removing bounding boxes and natural language summaries. Correctly identifies
@@ -23,6 +23,7 @@ def create_llm_input(results_data,  transcript=None, output_path="llm_analysis_i
             "total_frames_processed": len([k for k in results_data.keys() if k not in ['profiles', 'visualizations']]),
             "distinct_people_identified": {} # Summary based on FINAL profiles
         },
+        "fps": fps,
         "sentences in chunk": transcript,
         "frame_by_frame_analysis": []
     }

@@ -3,7 +3,7 @@ import os
 import math # Needed for distance calculation
 import re 
 import argparse  # Needed for parsing frame numbers from keys
-import closest_frame
+# import closest_frame
 
 # --- Configuration ---
 DEFAULT_BASE_DIR = "/Users/anaishadas/Desktop/theoffice/visual_audio_clean/output" # Directory containing chunk_1, chunk_2, ...
@@ -78,10 +78,13 @@ def find_closest_id(aligned_frame_identifier, people_in_frame, gt_entry):
         if str(track.get('id')) == str(gt_target_tracker_id):
             gt_bbox = track.get('bbox')
             break
-
+    
+    if gt_bbox is None:
+        return -1
+    
     if not gt_bbox:
-        # print(f"ERROR: Could not find bbox for ground truth target ID {gt_target_tracker_id} in GT data for frame {gt_frame_index}.")
-        return gt_bbox, float('inf'), aligned_frame_identifier
+        print(f"ERROR: Could not find bbox for ground truth target ID {gt_target_tracker_id} in GT data for frame.")
+            
     gt_center = calculate_center(gt_bbox)
     
     if not gt_center:
@@ -289,7 +292,7 @@ def run_alignment(analysis_base_dir, ground_truth_json_path, fps, max_chunks=100
         closest_id = find_closest_id(frame_id, people_in_frame, gt_entry)
         result_entry["closest_profile_id"] = closest_id
 
-        gt_entry["zoom_target_id"] = closest_id
+        # gt_entry["zoom_target_id"] = closest_id
 
 
 

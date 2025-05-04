@@ -26,6 +26,7 @@ from transcription import LOCAL_VIDEO_PATH, transcribe_audio_stream, group_trans
 from visualization import visualize_all
 from llm_output import create_llm_input
 
+globalfps = 30
 
 # --- Helper Function for Processing a Single Face ---
 def _process_single_face(face_roi_cv, box_pixels, frame_idx, known_faces, raw_profiles):
@@ -288,7 +289,7 @@ def _integrate_gaze_and_finalize(image_paths, frame_face_details, gaze_results, 
 
 
 # --- Updated process_video_in_chunks function ---
-def process_video_in_chunks(video_path, chunk_duration=10):
+def process_video_in_chunks(video_path, chunk_duration=30):
     """
     Process a video in fixed-duration chunks, saving results for each chunk separately.
     Uses the FaceTracker for more consistent tracking across frames.
@@ -303,11 +304,13 @@ def process_video_in_chunks(video_path, chunk_duration=10):
     # Get video metadata (total duration)
     import cv2
     video = cv2.VideoCapture(video_path)
+
     if not video.isOpened():
         print(f"FATAL ERROR: Could not open video file at '{video_path}'")
         return
     
     fps = video.get(cv2.CAP_PROP_FPS)
+    globalfps = fps
     frame_count = int(video.get(cv2.CAP_PROP_FRAME_COUNT))
     total_duration = frame_count / fps
     total_chunks = int(total_duration / chunk_duration) + 1
@@ -479,7 +482,7 @@ def analyze_video_frames_with_tracking(image_paths, chunk_idx, face_tracker, gaz
     )
 
     # -- Stage 5 --
-    transcript = transcribe_audio_stream(config.VIDEO_INPUT_PATH, chunk_size=10)[chunk_idx]
+    transcript = transcribe_audio_stream(config.VIDEO_INPUT_PATH, chunk_size=30)[chunk_idx]
 
     # Combine results
     overall_results = final_frame_results # Add the frame data
@@ -488,7 +491,7 @@ def analyze_video_frames_with_tracking(image_paths, chunk_idx, face_tracker, gaz
 
     # --- Stage 5: Generate LLM Input ---
     print("\n--- Stage 5: Generating LLM Input JSON ---")
-    llm_data = create_llm_input(overall_results, transcript, config.LLM_OUTPUT_PATH)
+    llm_data = create_llm_input(overall_results, transcript, config.LLM_OUTPUT_PATH, globalfps)
 
     end_time = time.time()
     print(f"\nAnalysis complete. Total time: {end_time - start_time:.2f} seconds.")
@@ -531,7 +534,25 @@ def display_analysis_results(results):
 # -----------------------------
 # Main Execution Block
 # -----------------------------
+  
 if __name__ == "__main__":
+    import sys
+    import os
+    
+    # Handle CLI input
+    video_path = sys.argv[1] if len(sys.argv) > 1 else config.VIDEO_INPUT_PATH
+
+    # Dynamically derive output directory name
+    base_name = os.path.splitext(os.path.basename(video_path))[0]
+    config.OUTPUT_DIR = os.path.join("output", base_name)
+
+    # Also update this for completeness
+    config.VIDEO_INPUT_PATH = video_path
+
+    print(f"📽️  Processing {video_path}")
+    print(f"📁  Saving outputs to {config.OUTPUT_DIR}")
+
+    ###
     print("--- Starting Chunked Video Analysis Pipeline with Face Tracking ---")
     
     if not os.path.exists(config.VIDEO_INPUT_PATH):

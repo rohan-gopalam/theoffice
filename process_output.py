@@ -3,6 +3,10 @@ import sys
 import json
 import math
 from collections import defaultdict, Counter
+from visual_audio_clean.alignment import run_alignment
+
+
+output_path = "/Users/aditya/Documents/code projects/theoffice/output/clip4.mp4/"
 
 def get_times_by_zoom_id(data):
     times_by_id = defaultdict(list)
@@ -11,11 +15,41 @@ def get_times_by_zoom_id(data):
         times_by_id[zid].append(e['label_time'])
     return times_by_id
 
-def fill_per_second(data):
+def detect_fps_from_chunks(base_dir, maxchunks=100):
+    """
+    Scan chunk_1, chunk_2, … until you find an analysis JSON,
+    then return its 'fps' field.
+    """
+    for i in range(1, maxchunks+1):
+        path = os.path.join(base_dir, f"chunk_{i}", f"analysis_chunk_{i}.json")
+        if os.path.exists(path):
+            with open(path, 'r') as f:
+                meta = json.load(f)
+            fps = meta.get('fps')
+            if fps is not None:
+                return float(fps)
+    raise RuntimeError(f"No FPS found in any of the first {maxchunks} chunks")
+
+def fill_per_second(chunks, data_path, base_fps=30, maxchunks=100):
     """
     Treat each JSON entry as a switch at its label_time.
     Return a dict mapping each integer second → current zoom_target_id.
     """
+    with open(data_path, 'r') as f:
+        data = json.load(f)
+    
+    fps = detect_fps_from_chunks(chunks)
+    
+    alignment_results = run_alignment(
+        analysis_base_dir=chunks,
+        ground_truth_json_path=data_path,
+        fps = fps,
+        max_chunks = maxchunks
+    )
+    
+    with open(data_path, 'r') as f:
+        data = json.load(f)
+        
     markers = sorted(
         [(e['label_time'], e['zoom_target_id']) for e in data],
         key=lambda x: x[0]
@@ -37,27 +71,29 @@ def fill_per_second(data):
     return timeline
 
 if __name__ == '__main__':
-    here = os.path.dirname(os.path.abspath(__file__))
-    if len(sys.argv) == 2:
-        json_path = sys.argv[1]
-    else:
-        json_path = os.path.join(here, 'caseoh_labels.json')
+    if len(sys.argv) != 3:
+        print("Usage: python process_output.py path/to/labeler.json path/to/output_chunks_dir")
+        sys.exit(1)
 
-    # load markers
+    json_path = sys.argv[1]
+    chunks_dir = sys.argv[2]
+
+    # Load and display stats
     with open(json_path, 'r') as f:
         data = json.load(f)
 
-    # 1) (optional) print full time lists
     times_by_id = get_times_by_zoom_id(data)
     print("All times by zoom_target_id:")
     for zid, tlist in sorted(times_by_id.items()):
         print(f"  id={zid:<5} → {len(tlist)} events")
 
-    # 2) build per-second timeline
-    sec_timeline = fill_per_second(data)
+    # Build per-second timeline
+    sec_timeline = fill_per_second(chunks_dir, json_path)
 
-    # 3) save to output_filtered.json
-    out_path = os.path.join(here, 'output_filtered.json')
+    # Output path: output_filtered_<basename>.json
+    base_name = os.path.splitext(os.path.basename(json_path))[0]
+    out_path = os.path.join(os.path.dirname(json_path), f"output_filtered_{base_name}.json")
+
     with open(out_path, 'w') as out_f:
         json.dump(sec_timeline, out_f, indent=2)
 
