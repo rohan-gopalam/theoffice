@@ -479,7 +479,7 @@ def analyze_video_frames_with_tracking(image_paths, chunk_idx, face_tracker, gaz
     )
 
     # -- Stage 5 --
-    transcript = transcribe_audio_stream(LOCAL_VIDEO_PATH, chunk_size=10)[chunk_idx]
+    transcript = transcribe_audio_stream(config.VIDEO_INPUT_PATH, chunk_size=10)[chunk_idx]
 
     # Combine results
     overall_results = final_frame_results # Add the frame data

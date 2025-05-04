@@ -7,7 +7,7 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 # --- Input Video & Frame Extraction ---
 # **** IMPORTANT: SET YOUR VIDEO PATH HERE ****
-VIDEO_INPUT_PATH = "/Users/preenamaru/launchpad/theoffice-1/videos/ween.mp4" # <--- CHANGE THIS TO YOUR VIDEO FILE
+VIDEO_INPUT_PATH = "/Users/aditya/Documents/code projects/theoffice/videos/ween.mp4" # <--- CHANGE THIS TO YOUR VIDEO FILE
 FRAMES_PER_SECOND_TO_EXTRACT = 1 # Extract 1 frame per second. Set to 0 or None for all frames.
 
 # --- Output Directories ---
@@ -24,10 +24,10 @@ gaze_transform = transforms.Compose([
 ])
 
 # Threshold for matching face embeddings across frames (used initially)
-EMBEDDING_THRESHOLD = 0.6
+EMBEDDING_THRESHOLD = 0.2
 
 # Confidence threshold for YOLO face detection
-YOLO_CONF_THRESHOLD = 0.5  # Increased from 0.5 for stricter filtering
+YOLO_CONF_THRESHOLD = 0.2  # Increased from 0.5 for stricter filtering
 
 # IoU threshold for Non-Maximum Suppression (lower = more suppression)
 NMS_IOU_THRESHOLD = 0.3 # Adjust this value (e.g., 0.3 to 0.6)
@@ -58,7 +58,7 @@ PERSON_CLASS_ID = 0  # In COCO dataset, class 0 is person
 FACE_ONLY = True  # Only track faces/people, not other objects
 
 # --- Model Paths & Repos ---
-YOLO_MODEL_PATH = "yolov8n.pt" # Or your specific YOLO face model path
+YOLO_MODEL_PATH = "yolo11n.pt" # Or your specific YOLO face model path
 GAZE_MODEL_REPO = 'fkryan/gazelle'
 GAZE_MODEL_NAME = 'gazelle_dinov2_vitl14_inout'
 

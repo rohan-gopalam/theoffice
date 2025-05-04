@@ -1,4 +1,7 @@
 # face_detection.py
+
+# skin and edges filtering are strong, everything turned off rn
+
 import cv2
 import numpy as np
 from ultralytics import YOLO
@@ -67,6 +70,7 @@ class FaceDetector:
         return face_boxes
     
     def _validate_face_box(self, img_array, bbox):
+        return True
         """
         Validate that a bounding box likely contains a face.
         
@@ -91,7 +95,7 @@ class FaceDetector:
         # Check aspect ratio (faces are roughly square-ish, not extremely elongated)
         width, height = x2 - x1, y2 - y1
         aspect_ratio = width / height
-        if aspect_ratio < 0.5 or aspect_ratio > 2.0:
+        if aspect_ratio < 0.2 or aspect_ratio > 5.0:
             return False
             
         # Extract face region
@@ -100,38 +104,39 @@ class FaceDetector:
             return False
             
         # Basic skin tone detection (optional)
-        return self._has_skin_tones(face_roi)
+        # return self._has_skin_tones(face_roi)
     
     def _has_skin_tones(self, face_roi):
-        """
-        Check if the ROI contains enough skin-like pixels to be a face.
+        return True
+        # """
+        # Check if the ROI contains enough skin-like pixels to be a face.
         
-        Args:
-            face_roi: Face region as a NumPy array.
+        # Args:
+        #     face_roi: Face region as a NumPy array.
             
-        Returns:
-            bool: True if contains sufficient skin tones, False otherwise.
-        """
-        try:
-            # Convert to HSV color space for better skin tone detection
-            face_hsv = cv2.cvtColor(face_roi, cv2.COLOR_BGR2HSV)
+        # Returns:
+        #     bool: True if contains sufficient skin tones, False otherwise.
+        # """
+        # try:
+        #     # Convert to HSV color space for better skin tone detection
+        #     face_hsv = cv2.cvtColor(face_roi, cv2.COLOR_BGR2HSV)
             
-            # Define common skin tone range in HSV
-            # This is a basic range that works for many skin tones
-            lower_skin = np.array([0, 20, 70], dtype=np.uint8)
-            upper_skin = np.array([25, 255, 255], dtype=np.uint8)
+        #     # Define common skin tone range in HSV
+        #     # This is a basic range that works for many skin tones
+        #     lower_skin = np.array([0, 20, 70], dtype=np.uint8)
+        #     upper_skin = np.array([25, 255, 255], dtype=np.uint8)
             
-            # Create skin mask
-            skin_mask = cv2.inRange(face_hsv, lower_skin, upper_skin)
+        #     # Create skin mask
+        #     skin_mask = cv2.inRange(face_hsv, lower_skin, upper_skin)
             
-            # Calculate percentage of skin pixels
-            skin_percentage = np.sum(skin_mask > 0) / (face_roi.shape[0] * face_roi.shape[1])
+        #     # Calculate percentage of skin pixels
+        #     skin_percentage = np.sum(skin_mask > 0) / (face_roi.shape[0] * face_roi.shape[1])
             
-            # Face should have a reasonable amount of skin tone pixels (adjust threshold as needed)
-            return skin_percentage > 0.25
-        except Exception as e:
-            print(f"Error in skin tone detection: {e}")
-            return True  # Default to True in case of error to avoid filtering too aggressively
+        #     # Face should have a reasonable amount of skin tone pixels (adjust threshold as needed)
+        #     return skin_percentage > 0.25
+        # except Exception as e:
+        #     print(f"Error in skin tone detection: {e}")
+        #     return True  # Default to True in case of error to avoid filtering too aggressively
     
     def visualize_detections(self, img_array, save_path=None):
         """
@@ -164,7 +169,7 @@ class FaceTracker:
         self.model_path = model_path
         self.device = device
         # Use a higher confidence threshold to reduce false positives
-        self.conf_threshold = max(conf_threshold, 0.65)  # Minimum 65% confidence
+        self.conf_threshold = conf_threshold  # Minimum 65% confidence
         self.tracker_config = tracker_config
         # Optionally use a stricter threshold for better differentiation
         self.embedding_threshold = embedding_threshold * 0.8 if embedding_threshold else 0.4
@@ -188,8 +193,8 @@ class FaceTracker:
         self.last_frame_idx = -1
         
         # Define minimum face size relative to frame
-        self.min_face_size = 0.05  # At least 5% of frame width/height
-        self.max_face_size = 0.8   # At most 80% of frame width/height
+        self.min_face_size = 0  # At least 5% of frame width/height
+        self.max_face_size = 1   # At most 80% of frame width/height
         
         print(f"FaceTracker initialized with confidence threshold: {self.conf_threshold}")
         print(f"FaceTracker initialized with embedding threshold: {self.embedding_threshold}")
@@ -217,6 +222,11 @@ class FaceTracker:
             List of dictionaries with face information.
         """
         # Get image dimensions for filtering
+        results = self.model.track(img_array, persist=True, tracker=self.tracker_config)
+        all_boxes = results[0].boxes.xyxy.cpu().numpy()
+        all_ids   = results[0].boxes.id   .cpu().numpy() if results[0].boxes.id is not None else []
+        print(f"[DEBUG] raw track() → {len(all_boxes)} boxes, {len(all_ids)} track IDs")
+        
         img_height, img_width = img_array.shape[:2]
         
         # Run YOLO with tracking
@@ -266,15 +276,18 @@ class FaceTracker:
                 width, height = x2 - x1, y2 - y1
                 if (width < img_width * self.min_face_size or 
                     height < img_height * self.min_face_size):
+                    print("Shape")
                     continue
                 
                 if (width > img_width * self.max_face_size or 
                     height > img_height * self.max_face_size):
+                    print("shape")
                     continue
                 
                 # Aspect ratio check (faces are roughly square-ish)
                 aspect_ratio = width / height
-                if aspect_ratio < 0.5 or aspect_ratio > 2.0:
+                if aspect_ratio < 0.2 or aspect_ratio > 4.0:
+                    print("ratio")
                     continue
                 
                 # Extract face region for validation
@@ -371,6 +384,7 @@ class FaceTracker:
         return faces_in_frame
     
     def _validate_face(self, face_roi):
+        return True
         """
         Comprehensive face validation based on multiple checks.
         
@@ -395,7 +409,8 @@ class FaceTracker:
             skin_percentage = np.sum(skin_mask > 0) / (face_roi.shape[0] * face_roi.shape[1])
             
             # Minimum required skin percentage
-            if skin_percentage < 0.25:
+            if skin_percentage < 0.01:
+                print('im racist')
                 return False
             
             # 2. Variance check (faces usually have varied brightness)
@@ -403,7 +418,8 @@ class FaceTracker:
             var = np.var(gray)
             
             # Low variance usually means uniform region, not a face
-            if var < 200:  # Adjust this threshold based on your needs
+            if var < 100:  # Adjust this threshold based on your needs
+                print('im blue')
                 return False
             
             # 3. Edge detection (faces have distinctive edges)
@@ -411,7 +427,8 @@ class FaceTracker:
             edge_ratio = np.count_nonzero(edges) / (gray.shape[0] * gray.shape[1])
             
             # Faces should have a reasonable amount of edges
-            if edge_ratio < 0.05 or edge_ratio > 0.3:
+            if edge_ratio < 0.01 or edge_ratio > 0.99:
+                print('im edgy')
                 return False
             
             # All checks passed
@@ -784,7 +801,7 @@ def detect_faces_yolo(img_array, yolo_face_model, conf_threshold=config.YOLO_CON
                     if x1 < x2 and y1 < y2:
                         width, height = x2 - x1, y2 - y1
                         aspect_ratio = width / height
-                        if 0.5 <= aspect_ratio <= 2.0:
+                        if 0.2 <= aspect_ratio <= 5.0:
                             face_boxes.append(bbox)
         else:
             # No class info (face-specific model)
@@ -796,7 +813,7 @@ def detect_faces_yolo(img_array, yolo_face_model, conf_threshold=config.YOLO_CON
                     if x1 < x2 and y1 < y2:
                         width, height = x2 - x1, y2 - y1
                         aspect_ratio = width / height
-                        if 0.5 <= aspect_ratio <= 2.0:
+                        if 0.2 <= aspect_ratio <= 5.0:
                             face_boxes.append(bbox)
     
     return face_boxes

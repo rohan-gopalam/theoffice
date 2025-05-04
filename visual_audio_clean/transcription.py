@@ -5,20 +5,25 @@ import yt_dlp
 from google.cloud import speech_v1p1beta1 as speech
 import threading
 import math
+import mediapipe as mp
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
+import time
 
 # Set Google Cloud credentials
 os.environ["GOOGLE_APPLICATION_CREDENTIALS"] = "/Users/aditya/Downloads/seismic-rarity-427422-p7-ab3b4a8726ef.json"
 
 # Configuration
 USE_LOCAL_FILE = True
-LOCAL_VIDEO_PATH = "/Users/aditya/Documents/code projects/theoffice/videos/ween.mp4"
+LOCAL_VIDEO_PATH = "/Users/aditya/Documents/code projects/theoffice/videos/clip4.mp4"
+
 # YOUTUBE_URL = "https://www.youtube.com/watch?v=96Y6mc3C1Bg"
 
 def format_time(time_sec):
     ms = int((time_sec % 1) * 1000)
     seconds = int(time_sec)
     return f"{seconds}:{ms:03d}"
-
+    
 def transcribe_audio_stream(audio_url, chunk_size=30):
     """Stream audio for transcription using Google Cloud Speech-to-Text."""
     client = speech.SpeechClient()
@@ -69,7 +74,7 @@ def transcribe_audio_stream(audio_url, chunk_size=30):
                     sentence = " ".join([word.word for word in current_sentence])
                     start_time = format_time(current_start_time)
                     end_time = format_time(current_end_time)
-                    transcription.append({"speaker": current_speaker, "start": current_start_time, "end": current_end_time, "text": sentence})
+                    transcription.append({"start": current_start_time, "end": current_end_time, "text": sentence})
                     current_speaker = word_info.speaker_tag
                     current_sentence = [word_info]
                     current_start_time = word_info.start_time.total_seconds()
@@ -82,16 +87,16 @@ def transcribe_audio_stream(audio_url, chunk_size=30):
                         sentence = " ".join([word.word for word in current_sentence])
                         start_time = format_time(current_start_time)
                         end_time = format_time(current_end_time)
-                        transcription.append({"speaker": current_speaker, "start": current_start_time, "end": current_end_time, "text": sentence})
+                        transcription.append({"start": current_start_time, "end": current_end_time, "text": sentence})
                         current_sentence = [word_info]
                         current_start_time = word_info.start_time.total_seconds()
-    
+        
     # Add the last sentence if there's anything
         if current_sentence:
             sentence = " ".join([word.word for word in current_sentence])
             start_time = format_time(current_start_time)
             end_time = format_time(current_end_time)
-            transcription.append({"speaker": current_speaker, "start": current_start_time, "end": current_end_time, "text": sentence})
+            transcription.append({"start": current_start_time, "end": current_end_time, "text": sentence})
         
         print("\n--- Raw Transcripts ---")
         print(transcription)
@@ -164,17 +169,22 @@ def play_video_with_transcription(video_src, audio_src):
     if not cap.isOpened():
         print("Error: Could not open video source.")
         return
+    
 
     print("Press 'q' to quit.")
 
     # start transcription thread
     t = threading.Thread(target=transcribe_audio_stream, args=(audio_src,))
     t.start()
+    
 
     while True:
         ret, frame = cap.read()
         if not ret:
             break
+        
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        
         cv2.imshow("Video", frame)
         if cv2.waitKey(1) & 0xFF == ord('q'):
             break

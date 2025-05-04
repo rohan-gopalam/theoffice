@@ -23,7 +23,7 @@ def create_llm_input(results_data,  transcript=None, output_path="llm_analysis_i
             "total_frames_processed": len([k for k in results_data.keys() if k not in ['profiles', 'visualizations']]),
             "distinct_people_identified": {} # Summary based on FINAL profiles
         },
-        "transcription of chunk": transcript,
+        "sentences in chunk": transcript,
         "frame_by_frame_analysis": []
     }
 
