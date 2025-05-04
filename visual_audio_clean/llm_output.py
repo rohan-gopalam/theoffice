@@ -75,7 +75,8 @@ def create_llm_input(results_data,  transcript=None, output_path="llm_analysis_i
             person_data = {
                 "name": person["name"],
                 "emotion_detected": person["emotion_detected"],
-                "gaze_info": None  # Default value
+                "gaze_info": None,
+                  "bbox" :  person["bbox"] # Default value
             }
 
             # Add gaze target information if available

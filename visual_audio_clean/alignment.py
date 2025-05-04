@@ -7,9 +7,9 @@ import closest_frame
 
 # --- Configuration ---
 DEFAULT_BASE_DIR = "/Users/anaishadas/Desktop/theoffice/visual_audio_clean/output" # Directory containing chunk_1, chunk_2, ...
-DEFAULT_GROUND_TRUTH_PATH = "/Users/anaishadas/Desktop/theoffice/visual_audio_clean/clip4file.json"
+DEFAULT_GROUND_TRUTH_PATH = "/Users/anaishadas/Desktop/theoffice/visual_audio_clean/labels.json"
 DEFAULT_FPS = 30
-DEFAULT_MAX_CHUNKS = 76
+DEFAULT_MAX_CHUNKS = 100
 import json
 import os
 import math
@@ -88,7 +88,7 @@ def find_closest_id(aligned_frame_identifier, people_in_frame, gt_entry):
         # print(f"ERROR: Could not calculate center for ground truth bbox for frame {gt_frame_index}.")
         return None, float('inf'), aligned_frame_identifier
     # print(f"  Ground Truth Center: ({gt_center[0]:.2f}, {gt_center[1]:.2f}) for Tracker ID {gt_target_tracker_id}") # Optional
-
+    # print(people_in_frame)
     frame_centers = []
     min_dist = 10000000
     min_dist_id = None
@@ -99,6 +99,8 @@ def find_closest_id(aligned_frame_identifier, people_in_frame, gt_entry):
         if (distance < min_dist):
             min_dist = distance
             min_dist_id = people["name"].split()[-1]
+        frame_centers.append(f_center)
+    # print(gt_center, frame_centers)
     return min_dist_id
 
 
@@ -267,7 +269,7 @@ def run_alignment(analysis_base_dir, ground_truth_json_path, fps, max_chunks=100
             }
         results.append(result_entry)
 
-        analysis_curr_dir = "/Users/anaishadas/Desktop/theoffice/visual_audio_clean/analysis_chunk_1.json"
+        analysis_curr_dir = analysis_base_dir + f"/chunk_{chunk}/analysis_chunk_{chunk}.json"
 
         try:
             with open(analysis_curr_dir, 'r') as f:
@@ -282,11 +284,13 @@ def run_alignment(analysis_base_dir, ground_truth_json_path, fps, max_chunks=100
         # print(analysis_curr_frame)
 
         people_in_frame = analysis_curr_frame.get("people_in_frame", [])
-        print(people_in_frame)
+        # print(people_in_frame)
 
         closest_id = find_closest_id(frame_id, people_in_frame, gt_entry)
         result_entry["closest_profile_id"] = closest_id
-    
+
+        gt_entry["zoom_target_id"] = closest_id
+
 
 
 
@@ -301,8 +305,19 @@ def run_alignment(analysis_base_dir, ground_truth_json_path, fps, max_chunks=100
         # if (i + 1) % 10 == 0 or i == len(ground_truth_data) - 1:
         #      print(f"Processed GT entry {i+1}/{len(ground_truth_data)} (Time: {gt_time:.3f}s) -> Found: Chunk {chunk}, Frame '{frame_id}' (Diff: {result_entry['time_difference_s']}s)")
 
-    print(f"--- Finished processing {gt_entries_with_time} ground truth entries with timestamps ---")
-    print(f"--- Found closest frames for {found_matches} entries ---")
+    print(f"--- Finished processing ground truth entries with targets ---")
+    print(f"--- Added alignment info for entries ---")
+
+    # --- Step 3: Write the MODIFIED ground_truth_data back to the file ---
+    try:
+        print(f"\nAttempting to overwrite ground truth file: {ground_truth_json_path}")
+        with open(ground_truth_json_path, 'w') as f_out:
+            json.dump(ground_truth_data, f_out, indent=2) # Use indent=2 to match original format
+        print(f"Successfully updated and saved ground truth file.")
+    except Exception as e:
+        print(f"Error writing updated data back to {ground_truth_json_path}: {e}")
+
+
     return results # Return the list of results
 
 # --- Main Execution Block (Example Usage if script is run directly) ---
