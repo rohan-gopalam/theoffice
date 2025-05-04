@@ -1,0 +1,615 @@
+{
+  "session_summary": {
+    "total_frames_processed": 10,
+    "distinct_people_identified": {
+      "1": {
+        "assigned_name": "Person 1",
+        "appeared_in_frame_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      },
+      "2": {
+        "assigned_name": "Person 2",
+        "appeared_in_frame_indices": [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7,
+          8,
+          9
+        ]
+      }
+    }
+  },
+  "fps": 30,
+  "sentences in chunk": [
+    {
+      "start": 0.0,
+      "end": 12.0,
+      "text": "I didn't eat them I've been over here all day and I haven't ate them Chad look how skinny I am what you laughing at"
+    },
+    {
+      "start": 12.0,
+      "end": 13.0,
+      "text": "I'm sorry dude"
+    },
+    {
+      "start": 13.0,
+      "end": 13.4,
+      "text": "huh"
+    },
+    {
+      "start": 13.4,
+      "end": 16.3,
+      "text": "no no you're skinny bro yeah you're easily 120"
+    },
+    {
+      "start": 16.3,
+      "end": 16.8,
+      "text": "yeah"
+    },
+    {
+      "start": 16.8,
+      "end": 18.8,
+      "text": "maybe 119 bro"
+    },
+    {
+      "start": 18.8,
+      "end": 21.5,
+      "text": "you think so you know I'll be cutting recently"
+    },
+    {
+      "start": 21.5,
+      "end": 22.4,
+      "text": "yeah man"
+    },
+    {
+      "start": 22.4,
+      "end": 23.7,
+      "text": "queso don't eat me"
+    },
+    {
+      "start": 23.7,
+      "end": 24.2,
+      "text": "oh"
+    },
+    {
+      "start": 24.2,
+      "end": 39.2,
+      "text": "yo yo listen here by the way we're sitting here reading the pregame chat everybody in the chats talking about all right jinxy he will be more buddy he ain't dead chat"
+    }
+  ],
+  "frame_by_frame_analysis": [
+    {
+      "frame_identifier": "frame_000000.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 3.28054575257948,
+            "disgust": 6.085653424034931e-05,
+            "fear": 31.527733024628994,
+            "happy": 0.0961615298328215,
+            "sad": 33.45101374971703,
+            "surprise": 0.07126507431088992,
+            "neutral": 31.573217323634942
+          },
+          "gaze_info": {
+            "gaze_target": "camera"
+          },
+          "bbox": [
+            2,
+            250,
+            534,
+            718
+          ]
+        },
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 0.2005048215690149,
+            "disgust": 2.4654643530781613e-05,
+            "fear": 1.0801836560776028,
+            "happy": 0.3061274947525558,
+            "sad": 1.8786761166856358,
+            "surprise": 8.239018634369428e-05,
+            "neutral": 96.53440097179418
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 1218,
+              "y": 204
+            },
+            "gaze_target": "other"
+          },
+          "bbox": [
+            553,
+            155,
+            1138,
+            716
+          ]
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_000060.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.2901532221585512,
+            "disgust": 1.9828208085853616e-10,
+            "fear": 98.41116666793823,
+            "happy": 0.0002902768983403803,
+            "sad": 1.0397606529295444,
+            "surprise": 0.00014745885437150719,
+            "neutral": 0.2584806876257062
+          },
+          "gaze_info": {
+            "gaze_target": "camera"
+          },
+          "bbox": [
+            2,
+            254,
+            533,
+            719
+          ]
+        },
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 0.21786238066852093,
+            "disgust": 0.004462236029212363,
+            "fear": 17.469744384288788,
+            "happy": 0.22150720469653606,
+            "sad": 16.060617566108704,
+            "surprise": 0.0002558750566095114,
+            "neutral": 66.0255491733551
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 1211,
+              "y": 204
+            },
+            "gaze_target": "other"
+          },
+          "bbox": [
+            546,
+            153,
+            1131,
+            715
+          ]
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_000120.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.004842663763491885,
+            "disgust": 9.635167587503513e-11,
+            "fear": 99.55196973991214,
+            "happy": 0.007900039525099592,
+            "sad": 0.32724833203842235,
+            "surprise": 0.027225141988516867,
+            "neutral": 0.08081990426636662
+          },
+          "gaze_info": {
+            "gaze_target": "camera"
+          },
+          "bbox": [
+            0,
+            249,
+            528,
+            719
+          ]
+        },
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 0.008421018719673157,
+            "disgust": 6.89116486096708e-08,
+            "fear": 61.23688220977783,
+            "happy": 7.475826144218445,
+            "sad": 7.155876606702805,
+            "surprise": 17.29491949081421,
+            "neutral": 6.828076392412186
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 795,
+              "y": 230
+            },
+            "gaze_target": "other"
+          },
+          "bbox": [
+            477,
+            6,
+            1206,
+            713
+          ]
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_000180.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.014268847858259699,
+            "disgust": 5.08449954450987e-12,
+            "fear": 99.4148432859685,
+            "happy": 3.6764270620900095e-05,
+            "sad": 0.5448720277024524,
+            "surprise": 2.6232227554969783e-05,
+            "neutral": 0.02595883716024978
+          },
+          "gaze_info": {
+            "gaze_target": "camera"
+          },
+          "bbox": [
+            0,
+            252,
+            527,
+            719
+          ]
+        },
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 0.2897690921511705,
+            "disgust": 1.1117270434073303e-06,
+            "fear": 4.801929655786136,
+            "happy": 72.1621973611234,
+            "sad": 4.606646946468767,
+            "surprise": 3.523248271539704,
+            "neutral": 14.61621013976396
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 850,
+              "y": 255
+            },
+            "gaze_target": "other"
+          },
+          "bbox": [
+            488,
+            0,
+            1228,
+            713
+          ]
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_000240.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.024711643381128415,
+            "disgust": 1.0738228265221422e-11,
+            "fear": 99.39793341135184,
+            "happy": 0.00010783750361449827,
+            "sad": 0.5561912629683331,
+            "surprise": 5.547822845223196e-05,
+            "neutral": 0.021005246847562116
+          },
+          "gaze_info": {
+            "gaze_target": "camera"
+          },
+          "bbox": [
+            0,
+            250,
+            525,
+            720
+          ]
+        },
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 0.004566790448734537,
+            "disgust": 4.0579561044751244e-06,
+            "fear": 0.021577641018666327,
+            "happy": 99.14414882659912,
+            "sad": 0.032173775252886117,
+            "surprise": 0.04363287007436156,
+            "neutral": 0.7538946345448494
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 716,
+              "y": 205
+            },
+            "gaze_target": "other"
+          },
+          "bbox": [
+            479,
+            0,
+            1211,
+            713
+          ]
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_000300.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.02070384842800666,
+            "disgust": 4.005111736653968e-11,
+            "fear": 95.26564535312112,
+            "happy": 0.0015267829438757926,
+            "sad": 4.684334434946247,
+            "surprise": 0.0016653780964730341,
+            "neutral": 0.02611905781716164
+          },
+          "gaze_info": {
+            "gaze_target": "camera"
+          },
+          "bbox": [
+            5,
+            250,
+            532,
+            716
+          ]
+        },
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 0.03666314441442258,
+            "disgust": 0.0014050044372591023,
+            "fear": 88.42963714246306,
+            "happy": 0.0015714833298466483,
+            "sad": 10.682862468616667,
+            "surprise": 4.9120165896712584e-05,
+            "neutral": 0.8478054697447456
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 712,
+              "y": 255
+            },
+            "gaze_target": "other"
+          },
+          "bbox": [
+            591,
+            187,
+            1133,
+            716
+          ]
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_000360.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.030381472962362942,
+            "disgust": 7.403537859828515e-11,
+            "fear": 92.34439685013275,
+            "happy": 0.001781712777998408,
+            "sad": 7.606427079822247,
+            "surprise": 0.0005391156585860552,
+            "neutral": 0.01647751148982042
+          },
+          "gaze_info": {
+            "gaze_target": "camera"
+          },
+          "bbox": [
+            7,
+            250,
+            533,
+            715
+          ]
+        },
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 0.174728746060282,
+            "disgust": 4.893079275092305e-07,
+            "fear": 9.470823407173157,
+            "happy": 0.0010626332368701696,
+            "sad": 44.0947562456131,
+            "surprise": 3.447538006184914e-05,
+            "neutral": 46.25859260559082
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 786,
+              "y": 165
+            },
+            "gaze_target": "other"
+          },
+          "bbox": [
+            582,
+            153,
+            1158,
+            716
+          ]
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_000420.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.05139925633557141,
+            "disgust": 7.127603086735934e-11,
+            "fear": 98.96116256713867,
+            "happy": 0.00018018786249740515,
+            "sad": 0.9657200425863266,
+            "surprise": 7.033791007415857e-05,
+            "neutral": 0.021471348009072244
+          },
+          "gaze_info": {
+            "gaze_target": "camera"
+          },
+          "bbox": [
+            0,
+            250,
+            527,
+            718
+          ]
+        },
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 0.018293311586603522,
+            "disgust": 3.439569389398524e-12,
+            "fear": 59.658998250961304,
+            "happy": 39.99471664428711,
+            "sad": 0.11340472847223282,
+            "surprise": 2.1120952098385715e-06,
+            "neutral": 0.21458924748003483
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 1283,
+              "y": 204
+            },
+            "gaze_target": "other"
+          },
+          "bbox": [
+            500,
+            18,
+            1204,
+            714
+          ]
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_000480.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 0.005350493302103132,
+            "disgust": 4.3891068557400104e-07,
+            "fear": 1.4621110633015633,
+            "happy": 82.95008540153503,
+            "sad": 1.323660183697939,
+            "surprise": 0.0014101263332122471,
+            "neutral": 14.257384836673737
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 1299,
+              "y": 472
+            },
+            "gaze_target": "other"
+          },
+          "bbox": [
+            543,
+            40,
+            1241,
+            714
+          ]
+        },
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.0012717489577795998,
+            "disgust": 4.688487028632572e-11,
+            "fear": 98.88004051208979,
+            "happy": 0.005040919732640242,
+            "sad": 1.1082534136776225,
+            "surprise": 6.971614517427459e-06,
+            "neutral": 0.005386955950670281
+          },
+          "gaze_info": {
+            "gaze_target": "camera"
+          },
+          "bbox": [
+            0,
+            249,
+            528,
+            718
+          ]
+        }
+      ]
+    },
+    {
+      "frame_identifier": "frame_000540.jpg",
+      "people_in_frame": [
+        {
+          "name": "Person 2",
+          "emotion_detected": {
+            "angry": 0.00013809579654684614,
+            "disgust": 6.325941037245567e-07,
+            "fear": 97.54328713079018,
+            "happy": 0.05549816163432071,
+            "sad": 2.3867813430298175,
+            "surprise": 8.025277032756884e-08,
+            "neutral": 0.01429902853224224
+          },
+          "gaze_info": {
+            "unnormalized_gaze_point": {
+              "x": 376,
+              "y": 318
+            },
+            "gaze_target": "Person 1",
+            "target_profile_id": 1
+          },
+          "bbox": [
+            556,
+            76,
+            1238,
+            716
+          ]
+        },
+        {
+          "name": "Person 1",
+          "emotion_detected": {
+            "angry": 0.015128398429541848,
+            "disgust": 3.422338125012312e-10,
+            "fear": 99.477672514638,
+            "happy": 0.02619330501439333,
+            "sad": 0.4693456553632802,
+            "surprise": 0.000431446193534171,
+            "neutral": 0.011228713148529905
+          },
+          "gaze_info": {
+            "gaze_target": "camera"
+          },
+          "bbox": [
+            6,
+            252,
+            530,
+            716
+          ]
+        }
+      ]
+    }
+  ],
+  "chunk_metadata": {
+    "chunk_index": 1,
+    "total_chunks": 129,
+    "start_time": 0,
+    "end_time": 10,
+    "frame_count": 10
+  }
+}

@@ -3,14 +3,14 @@ import os
 
 # List of (video_path, label_json_path) pairs
 video_label_pairs = [
-    ("videos/caseoh.mp4", "videos/caseoh_labels.json"),
-    ("videos/chugs.mp4", "videos/chugs.json"),
-    ("videos/clip4.mp4", "videos/clip4file.json"),
-    ("videos/kaiandkevin.mp4", "videos/kaiandkevin.json"),
-    ("videos/kaicenat.mp4", "videos/kaicenat_labels.json"),
-    ("videos/ray1.mp4", "videos/ray1.json"),
-    ("videos/valky_charity.mp4", "videos/valky_charity.json"),
-    ("videos/valky_drunk.mp4", "videos/valky_drunk.json"),
+    ("../caseoh.mp4", "../caseoh_labels.json"),
+    ("../chugs.mp4", "../chugs.json"),
+    ("../clip4.mp4", "../clip4file.json"),
+    ("../kaiandkevin.mp4", "../kaiandkevin.json"),
+    ("../kaicenat.mp4", "../kaicenat_labels.json"),
+    ("../ray1.mp4", "../ray1.json"),
+    ("../valky_charity.mp4", "../valky_charity.json"),
+    ("../valky_drunk.mp4", "../valky_drunk.json"),
 
 ]
 output_dir = "batch_outputs"
